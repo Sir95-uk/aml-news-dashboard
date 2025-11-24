@@ -1,39 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AML & Regulatory Dashboard</title>
-<style>
-  :root{--bg:#f6f8fb;--card:#fff;--accent:#003e8a;--muted:#6b7280}
-  body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);margin:0;padding:20px;color:#111}
-  header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  h1{margin:0;color:var(--accent)}
-  .controls{margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  input[type="search"], select{padding:8px;border-radius:8px;border:1px solid #d1d5db}
-  .grid{display:grid;grid-template-columns:1fr 340px;gap:16px;margin-top:18px}
-  .card{background:var(--card);padding:12px;border-radius:10px;box-shadow:0 6px 18px rgba(16,24,40,0.06)}
-  .item{padding:10px;border-radius:8px;border-left:4px solid #eef2ff;margin-bottom:10px;background:#fff}
-  .muted{color:var(--muted);font-size:13px}
-  .badge{display:inline-block;background:#ffeaaf;color:#6b3c00;padding:4px 8px;border-radius:999px;margin-left:8px;font-weight:700;font-size:12px}
-  .tag{display:inline-block;border-radius:6px;padding:4px 8px;margin-right:6px;background:#eef6ff;color:#0b3b66;font-size:12px}
-  details summary{cursor:pointer;padding:10px;border-radius:8px;background:#f8fafc;border:1px solid #e6eefb}
-  @media (max-width:900px){.grid{grid-template-columns:1fr}}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <div>
-    <h1>AML & Regulatory Dashboard</h1>
-    <div class="muted">Auto-loaded from <code>agencies.json</code> — shows summaries, tags and dates.</div>
-  </div>
-  <div id="mer" class="card muted">Loading MER countdown…</div>
-</header>
+<h1>AML & Regulatory Dashboard</h1>
+<p>Auto-loaded from agencies.json — shows summaries, tags and dates.</p>
+<p id="merCountdown">Loading MER countdown…</p>
 
-<div class="controls">
-  <input id="search" type="search" placeholder="Search title, summary, tags..." style="width:420px" />
-  <select id="agencyFilter"><option value="all">All agencies</option></select>
-  <button id="clear" onclick="clearFilters()">Clear</button>
+<input type="text" id="searchBox" placeholder="Search title, summary, tags..." />
+
+<select id="agencyFilter">
+  <option value="">All agencies</option>
+</select>
+
+<div id="dashboard"></div>
+
+<h2>Upcoming Dates</h2>
+<div id="upcomingDates"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
   <div style="margin-left:auto" class="muted">Last update: <span id="lastUpdate">--</span></div>
 </div>
 
