@@ -6,44 +6,39 @@
 <title>AML & Regulatory Dashboard</title>
 <style>
   body { font-family: Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
-  h1 { color: #2c3e50; text-align: center; }
-  .section { margin-bottom: 20px; border-radius: 8px; padding: 10px; }
+  h1 { color: #2c3e50; text-align: center; margin-bottom: 10px; }
+  p { text-align: center; color: #555; }
+  .section { margin-bottom: 15px; border-radius: 10px; padding: 0; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
   button { 
     cursor: pointer; 
-    padding: 10px 15px; 
-    margin-top: 10px; 
+    padding: 15px 20px; 
     width: 100%; 
     text-align: left; 
     border: none; 
-    border-radius: 5px;
-    background-color: #ffd700; 
-    color: #000;
-    font-weight: bold;
-    font-size: 16px;
-    transition: background 0.3s;
+    font-size: 16px; 
+    font-weight: bold; 
+    color: #000; 
+    transition: 0.3s; 
   }
-  button:hover { background-color: #ffc107; }
   .content { 
     display: none; 
-    padding: 10px; 
-    background: #ffffff; 
-    border-left: 5px solid #2c3e50; 
-    margin-top: 5px; 
-    border-radius: 5px;
-    animation: fadeIn 0.5s ease-in-out;
+    padding: 15px; 
+    background: #fff; 
+    border-left: 8px solid #2c3e50; 
+    animation: fadeIn 0.4s ease-in-out;
   }
   table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-  th, td { border: 1px solid #ddd; padding: 8px; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
   th { background-color: #2c3e50; color: white; }
   tr:nth-child(even) { background-color: #f2f2f2; }
-  tr:hover { background-color: #ddd; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  tr:hover { background-color: #e0e0e0; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 
 <h1>AML & Regulatory Dashboard</h1>
-<p style="text-align:center;">Filter by agency to view updates, summaries, priorities, and upcoming dates.</p>
+<p>Click an agency to see news, summaries, and priorities. Diary of important dates below.</p>
 
 <div id="dashboard"></div>
 
@@ -62,38 +57,57 @@
 
 <script>
 const agenciesData = [
-  {
-    name: "HM Treasury",
+  { name: "HM Treasury", color: "#ff9999",
     news: [
-      { title: "New AML guidance", summary: "Updated AML rules for firms.", link: "#" },
-      { title: "Budget 2026", summary: "Budget focuses on AML compliance.", link: "#" }
+      { title: "New AML guidance", summary: "Updated AML rules for UK financial firms.", link: "#" },
+      { title: "Budget 2026", summary: "Budget includes AML compliance focus.", link: "#" }
     ],
-    priorities: ["Strengthening UK AML regime", "Economic oversight"],
-    importantDates: [{ date: "2025-12-01", title: "Consultation deadline", tags: "AML" }]
+    priorities: ["Strengthen UK AML regime", "Economic oversight"], 
+    importantDates: [{ date:"2025-12-01", title:"Consultation deadline", tags:"AML" }]
   },
-  {
-    name: "Home Office",
+  { name: "Home Office", color:"#ffcc99",
     news: [
-      { title: "Immigration reform", summary: "Policy update related to border and AML investigations.", link: "#" }
+      { title: "Immigration reform announced", summary: "Policy update related to border and AML investigations.", link: "#" }
     ],
     priorities: ["Border security", "AML investigations support"],
-    importantDates: [{ date: "2025-11-30", title: "Policy release", tags: "AML" }]
+    importantDates: [{ date:"2025-11-30", title:"Policy release", tags:"AML" }]
   },
-  {
-    name: "HMRC",
+  { name: "HMRC", color:"#ffff99",
     news: [
-      { title: "Crypto reporting requirements updated", summary: "New guidance on crypto compliance.", link: "#" }
+      { title:"Crypto reporting updated", summary:"New guidance on crypto compliance for firms.", link:"#"}
     ],
-    priorities: ["Tax compliance", "AML supervision"],
-    importantDates: [{ date: "2025-12-15", title: "Crypto guidance release", tags: "AML, Crypto" }]
+    priorities:["Tax compliance", "AML supervision"],
+    importantDates:[{date:"2025-12-15", title:"Crypto guidance release", tags:"AML, Crypto"}]
   },
-  {
-    name: "FATF",
-    news: [
-      { title: "Next MER scheduled", summary: "The UK's next Mutual Evaluation Review will assess AML regime effectiveness.", link: "#" }
-    ],
-    priorities: ["Global AML standards", "UK evaluation"],
-    importantDates: [{ date: "2027-01-01", title: "MER Review", tags: "AML" }]
+  { name: "FATF", color:"#99ff99",
+    news:[{title:"Next MER scheduled", summary:"The UK's next Mutual Evaluation Review will assess AML regime effectiveness.", link:"#"}],
+    priorities:["Global AML standards", "UK evaluation"],
+    importantDates:[{date:"2027-01-01", title:"MER Review", tags:"AML"}]
+  },
+  { name: "FCA", color:"#99ffff",
+    news:[{title:"REP CRIM guidance", summary:"Updated guidance for authorized firms on AML reporting.", link:"#"}],
+    priorities:["Supervision of authorized firms", "Crypto oversight"],
+    importantDates:[{date:"2025-12-10", title:"Compliance check", tags:"AML, Crypto"}]
+  },
+  { name: "OFCOM", color:"#cc99ff",
+    news:[{title:"Communications regulation update", summary:"Regulatory priorities affecting digital communications.", link:"#"}],
+    priorities:["Digital comms supervision", "Consumer protection"],
+    importantDates:[{date:"2025-12-05", title:"Policy release", tags:"Regulation"}]
+  },
+  { name: "Trading Standards", color:"#ff99cc",
+    news:[{title:"Consumer protection campaign", summary:"New AML and fraud awareness initiatives.", link:"#"}],
+    priorities:["AML & fraud awareness", "Consumer protection"],
+    importantDates:[{date:"2025-11-28", title:"Campaign launch", tags:"AML, Fraud"}]
+  },
+  { name: "National Trading Standards", color:"#ffccff",
+    news:[{title:"National fraud alerts", summary:"Updates on high-risk sectors and AML supervision.", link:"#"}],
+    priorities:["Supervision of payment firms", "Fraud prevention"],
+    importantDates:[{date:"2025-12-02", title:"Alert release", tags:"Fraud, AML"}]
+  },
+  { name: "DWP", color:"#99ccff",
+    news:[{title:"Benefit & AML review", summary:"Impact on payments and AML checks.", link:"#"}],
+    priorities:["Welfare supervision", "AML compliance checks"],
+    importantDates:[{date:"2025-12-12", title:"Policy update", tags:"AML, Payments"}]
   }
 ];
 
@@ -106,15 +120,14 @@ agenciesData.forEach(a => {
 
   const btn = document.createElement("button");
   btn.textContent = a.name;
-  btn.onclick = () => {
-    content.style.display = content.style.display === "block" ? "none" : "block";
-  };
+  btn.style.backgroundColor = a.color;
+  btn.onclick = () => { content.style.display = content.style.display==="block"?"none":"block"; };
 
   const content = document.createElement("div");
   content.className = "content";
 
-  const newsHTML = `<h3>News</h3>${a.news.map(n => `<p><strong>${n.title}</strong> - ${n.summary} <a href="${n.link}" target="_blank">Read more</a></p>`).join("")}`;
-  const prioritiesHTML = `<h3>Priorities</h3><ul>${a.priorities.map(p => `<li>${p}</li>`).join("")}</ul>`;
+  const newsHTML = `<h3>News</h3>${a.news.map(n=>`<p><strong>${n.title}</strong> - ${n.summary} <a href="${n.link}" target="_blank">Read more</a></p>`).join("")}`;
+  const prioritiesHTML = `<h3>Priorities</h3><ul>${a.priorities.map(p=>`<li>${p}</li>`).join("")}</ul>`;
 
   content.innerHTML = newsHTML + prioritiesHTML;
 
@@ -124,7 +137,7 @@ agenciesData.forEach(a => {
 
   // Add to diary table
   const tbody = document.querySelector("#diary tbody");
-  a.importantDates.forEach(d => {
+  a.importantDates.forEach(d=>{
     const row = document.createElement("tr");
     row.innerHTML = `<td>${d.date}</td><td>${a.name}</td><td>${d.title}</td><td>${d.tags}</td>`;
     tbody.appendChild(row);
