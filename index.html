@@ -5,107 +5,170 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AML & Regulatory Dashboard</title>
 <style>
-body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
-h1 { color: #2c3e50; }
-.section { margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; background: #fff; }
-.section button { width: 100%; text-align: left; padding: 10px; background: #2c3e50; color: #fff; border: none; cursor: pointer; font-size: 16px; border-radius: 5px 5px 0 0; }
-.section button:hover { background: #34495e; }
-.content { display: none; padding: 10px 15px; }
-.content h3 { margin-top: 0; color: #2c3e50; }
-ul { margin-top: 5px; }
-#filter { margin-bottom: 20px; padding: 8px; font-size: 16px; }
-#merCountdown { font-weight: bold; margin-bottom: 15px; }
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  h1 { color: #2c3e50; }
+  select, button { padding: 8px; margin: 5px 0; }
+  .section { margin-bottom: 20px; }
+  .content { display: none; margin-top: 10px; border-left: 3px solid #2c3e50; padding-left: 10px; }
+  .news-item { margin-bottom: 10px; }
+  a { color: #1a73e8; text-decoration: none; }
 </style>
 </head>
 <body>
 
 <h1>AML & Regulatory Dashboard</h1>
-<p>Auto-loaded from <code>agencies.json</code> — shows news, summaries, priorities, and dates.</p>
-<div id="merCountdown">Loading MER countdown…</div>
-<label for="filter">Filter by Agency:</label>
-<select id="filter">
-  <option value="All">All agencies</option>
+
+<p>Filter by Agency:</p>
+<select id="agencySelect">
+  <option value="all">All agencies</option>
 </select>
 
-<div id="dashboard"></div>
+<div class="section">
+  <h2>News</h2>
+  <div id="news" class="content"></div>
+</div>
+
+<div class="section">
+  <h2>Priorities</h2>
+  <div id="priorities" class="content"></div>
+</div>
+
+<div class="section">
+  <h2>Important Dates</h2>
+  <div id="dates" class="content"></div>
+</div>
+
+<div class="section">
+  <h2>FCA Supervision / Crossover</h2>
+  <div id="crossover" class="content"></div>
+</div>
 
 <script>
-// FATF MER 2027 countdown
-const merDate = new Date("2027-01-01T00:00:00");
-function updateMERCountdown() {
-  const now = new Date();
-  const diff = merDate - now;
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  document.getElementById('merCountdown').textContent = `⏳ FATF MER 2027 in ${days} days`;
-}
-updateMERCountdown();
-setInterval(updateMERCountdown, 1000 * 60 * 60); // update hourly
+// Example JSON data
+const agenciesData = [
+  {
+    "name": "HM Treasury",
+    "news": [
+      {
+        "title": "New AML guidance published",
+        "link": "https://www.gov.uk/government/publications/aml-guidance",
+        "summary": "Updated AML guidance sets expectations for UK financial firms."
+      },
+      {
+        "title": "Budget 2026 announced",
+        "link": "https://www.gov.uk/government/news/budget-2026",
+        "summary": "HM Treasury presents new budget with AML compliance focus."
+      }
+    ],
+    "priorities": ["Strengthening UK AML regime", "Economic oversight and regulatory reform"],
+    "importantDates": ["2025-12-01: Public consultation deadline"],
+    "crossoverWithFCA": "FCA supervision applies to financial firms affected by AML guidance"
+  },
+  {
+    "name": "Home Office",
+    "news": [
+      {
+        "title": "Immigration reform announced",
+        "link": "https://www.gov.uk/government/news/immigration-reform",
+        "summary": "Policy update related to border and AML investigations."
+      }
+    ],
+    "priorities": ["Border security", "AML investigations support"],
+    "importantDates": ["2025-11-30: Policy update release"],
+    "crossoverWithFCA": "Collaboration with FCA on financial crime investigations"
+  },
+  {
+    "name": "FATF",
+    "news": [
+      {
+        "title": "Next MER scheduled",
+        "link": "https://www.fatf-gafi.org/publications/mutualevaluations/",
+        "summary": "The UK's next Mutual Evaluation Review will assess AML regime effectiveness."
+      }
+    ],
+    "priorities": ["Global AML standards", "UK evaluation"],
+    "importantDates": ["2027: UK Mutual Evaluation Review"],
+    "crossoverWithFCA": "Ensures UK AML compliance is aligned with global FATF standards"
+  }
+];
 
-// Load JSON from GitHub
-const agenciesURL = 'https://raw.githubusercontent.com/Sir95-uk/aml-news-dashboard/main/agencies.json';
+// Populate agency dropdown
+const agencySelect = document.getElementById("agencySelect");
+agenciesData.forEach(a => {
+  const option = document.createElement("option");
+  option.value = a.name;
+  option.text = a.name;
+  agencySelect.add(option);
+});
 
-fetch(agenciesURL)
-  .then(res => res.json())
-  .then(data => {
-    const container = document.getElementById('dashboard');
-    const filter = document.getElementById('filter');
-
-    // Populate filter dropdown
-    data.agencies.forEach(agency => {
-      const opt = document.createElement('option');
-      opt.value = agency.name;
-      opt.textContent = agency.name;
-      filter.appendChild(opt);
-    });
-
-    function render(agencyFilter) {
-      container.innerHTML = '';
-      data.agencies.forEach(agency => {
-        if (agencyFilter !== 'All' && agency.name !== agencyFilter) return;
-
-        const section = document.createElement('div');
-        section.className = 'section';
-
-        const btn = document.createElement('button');
-        btn.textContent = agency.name;
-        btn.onclick = () => {
-          content.style.display = content.style.display === 'block' ? 'none' : 'block';
-        };
-
-        const content = document.createElement('div');
-        content.className = 'content';
-
-        const createList = (title, items) => {
-          const h3 = document.createElement('h3');
-          h3.textContent = title;
-          content.appendChild(h3);
-          const ul = document.createElement('ul');
-          items.forEach(item => {
-            const li = document.createElement('li');
-            li.textContent = item;
-            ul.appendChild(li);
-          });
-          content.appendChild(ul);
-        };
-
-        createList('News', agency.news || []);
-        createList('Summary', agency.summary || []);
-        createList('Priorities', agency.priorities || []);
-        createList('Important Dates', agency.importantDates || []);
-
-        section.appendChild(btn);
-        section.appendChild(content);
-        container.appendChild(section);
-      });
-    }
-
-    filter.addEventListener('change', () => render(filter.value));
-    render('All');
-  })
-  .catch(err => {
-    document.getElementById('dashboard').innerHTML = `<p style="color:red;">Error loading agencies.json — check file name & structure in repo.</p>`;
-    console.error(err);
+// Display content
+function displayAgency(agency) {
+  // News
+  const newsContainer = document.getElementById("news");
+  newsContainer.innerHTML = "";
+  agency.news.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "news-item";
+    div.innerHTML = `<strong>${item.title}</strong> - <a href="${item.link}" target="_blank">Read more</a><br>${item.summary}`;
+    newsContainer.appendChild(div);
   });
+
+  // Priorities
+  document.getElementById("priorities").innerText = agency.priorities.join(", ");
+
+  // Important dates
+  document.getElementById("dates").innerHTML = agency.importantDates.join("<br>");
+
+  // FCA crossover
+  document.getElementById("crossover").innerText = agency.crossoverWithFCA || "No FCA link provided";
+
+  // Show sections
+  document.querySelectorAll(".content").forEach(c => c.style.display = "block");
+}
+
+// Show all agencies by default
+function displayAll() {
+  const newsContainer = document.getElementById("news");
+  newsContainer.innerHTML = "";
+  const prioritiesContainer = document.getElementById("priorities");
+  prioritiesContainer.innerHTML = "";
+  const datesContainer = document.getElementById("dates");
+  datesContainer.innerHTML = "";
+  const crossoverContainer = document.getElementById("crossover");
+  crossoverContainer.innerHTML = "";
+
+  agenciesData.forEach(agency => {
+    const header = document.createElement("h3");
+    header.innerText = agency.name;
+    newsContainer.appendChild(header);
+    agency.news.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "news-item";
+      div.innerHTML = `<strong>${item.title}</strong> - <a href="${item.link}" target="_blank">Read more</a><br>${item.summary}`;
+      newsContainer.appendChild(div);
+    });
+    prioritiesContainer.innerHTML += `<strong>${agency.name}:</strong> ${agency.priorities.join(", ")}<br>`;
+    datesContainer.innerHTML += `<strong>${agency.name}:</strong> ${agency.importantDates.join(", ")}<br>`;
+    crossoverContainer.innerHTML += `<strong>${agency.name}:</strong> ${agency.crossoverWithFCA}<br>`;
+  });
+
+  document.querySelectorAll(".content").forEach(c => c.style.display = "block");
+}
+
+// Event listener
+agencySelect.addEventListener("change", () => {
+  const selected = agencySelect.value;
+  if (selected === "all") {
+    displayAll();
+  } else {
+    const agency = agenciesData.find(a => a.name === selected);
+    displayAgency(agency);
+  }
+});
+
+// Initial display
+displayAll();
 </script>
+
 </body>
 </html>
