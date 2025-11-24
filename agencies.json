@@ -1,76 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AML & Regulatory Dashboard</title>
-<style>
-  body { font-family: Arial, sans-serif; padding: 20px; }
-  h1 { color: #2c3e50; }
-  .agency { margin-bottom: 15px; }
-  .agency h2 { cursor: pointer; background-color: #ecf0f1; padding: 8px; }
-  .content { display: none; padding: 10px 15px; border-left: 3px solid #2c3e50; margin-top: 5px; }
-  .news-item { margin-bottom: 5px; }
-  .date { font-weight: bold; }
-  #search { margin-bottom: 15px; padding: 8px; width: 100%; }
-</style>
-</head>
-<body>
-<h1>AML & Regulatory Dashboard</h1>
-<p id="merCountdown">Loading MER countdown…</p>
-<input type="text" id="search" placeholder="Search title, summary, tags...">
-
-<div id="agenciesContainer">Loading agencies…</div>
-
-<script>
-async function loadAgencies() {
-  try {
-    const res = await fetch('agencies.json');
-    const data = await res.json();
-    document.getElementById('agenciesContainer').innerHTML = '';
-    const agencies = data.agencies;
-
-    agencies.forEach(agency => {
-      const div = document.createElement('div');
-      div.classList.add('agency');
-
-      const header = document.createElement('h2');
-      header.textContent = agency.name;
-      header.onclick = () => content.style.display = content.style.display === 'block' ? 'none' : 'block';
-      div.appendChild(header);
-
-      const content = document.createElement('div');
-      content.classList.add('content');
-
-      const newsHtml = agency.news.map(n => `<div class="news-item">${n}</div>`).join('');
-      const prioritiesHtml = `<p><strong>Priorities:</strong> ${agency.priorities.join(', ')}</p>`;
-      const datesHtml = `<p><strong>Important Dates:</strong> ${agency.importantDates.join(', ')}</p>`;
-      content.innerHTML = newsHtml + prioritiesHtml + datesHtml;
-
-      div.appendChild(content);
-      document.getElementById('agenciesContainer').appendChild(div);
-    });
-
-    // MER countdown
-    const merDate = new Date('2027-01-01'); // approximate MER date
-    const now = new Date();
-    const days = Math.ceil((merDate - now)/ (1000*60*60*24));
-    document.getElementById('merCountdown').textContent = `⏳ FATF MER 2027 in ${days} days`;
-  } catch(e) {
-    document.getElementById('agenciesContainer').textContent = 'Error loading agencies.json — check file name & structure in repo.';
-  }
+{
+  "lastUpdated": "2025-11-24",
+  "agencies": [
+    {
+      "name": "HM Treasury",
+      "news": ["New AML guidance published", "Budget announcement 2026"],
+      "summary": ["Guidance on strengthening AML supervision and asset recovery", "Annual budget plans affecting financial oversight"],
+      "priorities": ["Strengthening UK AML regime", "Economic oversight"],
+      "importantDates": ["2025-12-01: Public consultation deadline"]
+    },
+    {
+      "name": "Home Office",
+      "news": ["Immigration reform announced"],
+      "summary": ["Updates to immigration policy relevant to AML investigations"],
+      "priorities": ["Border security", "AML investigations support"],
+      "importantDates": ["2025-11-30: Policy update release"]
+    },
+    {
+      "name": "HMRC",
+      "news": ["Crypto reporting requirements updated"],
+      "summary": ["New guidance on crypto compliance and reporting for firms"],
+      "priorities": ["Tax compliance", "AML supervision"],
+      "importantDates": ["2025-12-15: New guidance on crypto"]
+    },
+    {
+      "name": "FATF",
+      "news": ["Next MER scheduled"],
+      "summary": ["Global AML standards and UK evaluation"],
+      "priorities": ["Global AML standards", "UK evaluation"],
+      "importantDates": ["2027: UK Mutual Evaluation Review"]
+    },
+    {
+      "name": "FCA",
+      "news": ["REP CRIM update guidance released"],
+      "summary": ["Supervision guidance for regulated firms and crypto oversight"],
+      "priorities": ["Supervision of authorized firms", "Crypto oversight"],
+      "importantDates": ["2025-12-10: Compliance check deadline"]
+    }
+  ]
 }
-
-// Search filter
-document.getElementById('search').addEventListener('input', e => {
-  const query = e.target.value.toLowerCase();
-  document.querySelectorAll('.agency').forEach(div => {
-    const text = div.textContent.toLowerCase();
-    div.style.display = text.includes(query) ? 'block' : 'none';
-  });
-});
-
-loadAgencies();
-</script>
-</body>
-</html>
