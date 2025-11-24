@@ -7,10 +7,11 @@
 <style>
 body { font-family: Arial, sans-serif; background: #f0f4f7; padding: 20px; }
 h1, h2 { color: #1a3e5c; }
-.section { margin-bottom: 15px; border-radius: 8px; padding: 10px; color: #fff; }
-button { cursor: pointer; margin: 5px 0; padding: 8px 12px; border-radius: 4px; border: none; font-weight: bold; }
+.section { margin-bottom: 15px; border-radius: 8px; padding: 10px; color: #fff; transition: all 0.3s ease; }
+button { cursor: pointer; margin: 5px 0; padding: 8px 12px; border-radius: 4px; border: none; font-weight: bold; color:#fff; }
 button:hover { opacity: 0.8; }
-.content { display: none; margin-top: 10px; padding: 10px; border-radius: 6px; background: rgba(255,255,255,0.9); color: #000; }
+.content { display: none; margin-top: 10px; padding: 10px; border-radius: 6px; background: rgba(255,255,255,0.95); color: #000; max-height:0; overflow:hidden; transition:max-height 0.5s ease, opacity 0.5s ease; opacity:0; }
+.content.show { display:block; max-height:1000px; opacity:1; }
 table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; border-radius: 6px; overflow: hidden; }
 th, td { padding: 8px; border-bottom: 1px solid #ddd; text-align: left; }
 tr:nth-child(even) { background: #f2f2f2; }
@@ -48,24 +49,24 @@ tr:nth-child(even) { background: #f2f2f2; }
 <script>
 // --- Sample Data ---
 const agencies = [
-  { name: "HM Treasury", color:"#3498db", news:[
+  { name: "HM Treasury", color:"#2980b9", news:[
       { title:"New AML guidance", summary:"Updated AML rules for UK financial firms.", url:"#", tags:["AML"] },
       { title:"Budget 2026", summary:"Focuses on AML compliance and economic oversight.", url:"#", tags:["AML","Payment"] }
     ], priorities:["Strengthening UK AML regime","Economic oversight"], dates:[{date:"2025-12-01", title:"Consultation deadline", tags:["AML"]}]
   },
-  { name: "Home Office", color:"#e67e22", news:[
+  { name: "Home Office", color:"#d35400", news:[
       { title:"Immigration reform", summary:"Policy update for border and AML investigations.", url:"#", tags:["AML","Fraud"] }
     ], priorities:["Border security","AML support"], dates:[{date:"2025-11-30", title:"Policy release", tags:["AML"]}]
   },
-  { name: "HMRC", color:"#2ecc71", news:[
+  { name: "HMRC", color:"#27ae60", news:[
       { title:"Crypto reporting updated", summary:"New guidance on cryptocurrency reporting for compliance.", url:"#", tags:["Crypto","AML"] }
     ], priorities:["Tax compliance","AML supervision"], dates:[{date:"2025-12-15", title:"Crypto guidance", tags:["Crypto","AML"]}]
   },
-  { name: "FATF", color:"#9b59b6", news:[
+  { name: "FATF", color:"#8e44ad", news:[
       { title:"Next MER scheduled", summary:"UK's next Mutual Evaluation Review (MER) assessing AML regime.", url:"#", tags:["AML","Global"] }
     ], priorities:["Global AML standards","UK evaluation"], dates:[{date:"2027-01-01", title:"FATF MER 2027", tags:["AML","Global"]}]
   },
-  { name: "FCA", color:"#e74c3c", news:[
+  { name: "FCA", color:"#c0392b", news:[
       { title:"REP CRIM guidance released", summary:"Updated guidance for reporting obligations.", url:"#", tags:["AML","Payment"] }
     ], priorities:["Supervision of authorized firms","Crypto oversight"], dates:[{date:"2025-12-10", title:"Compliance deadline", tags:["AML","Payment"]}]
   }
@@ -89,7 +90,6 @@ function renderDashboard(filterValue="", search="") {
   diaryBody.innerHTML = "";
   agencies.forEach(a => {
     if(filterValue && filterValue !== "all" && a.name !== filterValue) return;
-    // Filter search
     const hasSearch = search.toLowerCase();
     const match = a.news.some(n => n.title.toLowerCase().includes(hasSearch) || n.summary.toLowerCase().includes(hasSearch) || n.tags.join().toLowerCase().includes(hasSearch));
     if(search && !match) return;
@@ -100,7 +100,9 @@ function renderDashboard(filterValue="", search="") {
 
     const btn = document.createElement("button");
     btn.textContent=a.name;
-    btn.onclick=()=>{ content.style.display=content.style.display==="block"?"none":"block"; };
+    btn.onclick=()=>{ 
+      content.classList.toggle("show");
+    };
     section.appendChild(btn);
 
     const content = document.createElement("div");
