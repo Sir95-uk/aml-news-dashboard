@@ -17,8 +17,13 @@ a { color: #1a73e8; text-decoration: none; }
 table { width: 100%; border-collapse: collapse; margin-top: 20px; }
 th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
 th { background: #2c3e50; color: white; }
-.tag { display: inline-block; background: #3498db; color: white; padding: 2px 6px; margin-right: 5px; border-radius: 3px; font-size: 12px; }
-#merCountdown { font-weight: bold; color: #e74c3c; }
+.tag { display: inline-block; padding: 2px 6px; margin-right: 5px; border-radius: 3px; font-size: 12px; color: white; }
+.tag.AML { background: #e67e22; }
+.tag.Fraud { background: #c0392b; }
+.tag.Crypto { background: #8e44ad; }
+.tag.Payment { background: #16a085; }
+.tag.Sanctions { background: #d35400; }
+#merCountdown { font-weight: bold; color: #e74c3c; margin-bottom: 15px; }
 </style>
 </head>
 <body>
@@ -36,6 +41,7 @@ th { background: #2c3e50; color: white; }
       <th>Date</th>
       <th>Agency</th>
       <th>Title</th>
+      <th>Tags</th>
     </tr>
   </thead>
   <tbody></tbody>
@@ -47,38 +53,38 @@ const agenciesData = [
   {
     name: "HM Treasury",
     news: [
-      { title: "New AML guidance published", summary: "Updated AML guidance sets expectations for UK financial firms.", link: "https://www.gov.uk/government/publications/aml-guidance" },
-      { title: "Budget 2026 announced", summary: "HM Treasury presents new budget with AML compliance focus.", link: "https://www.gov.uk/government/news/budget-2026" }
+      { title: "New AML guidance published", summary: "Updated AML guidance sets expectations for UK financial firms.", link: "https://www.gov.uk/government/publications/aml-guidance", tags: ["AML"] },
+      { title: "Budget 2026 announced", summary: "HM Treasury presents new budget with AML compliance focus.", link: "https://www.gov.uk/government/news/budget-2026", tags: ["AML", "Payment"] }
     ],
     priorities: ["Strengthening UK AML regime", "Economic oversight and regulatory reform"],
-    importantDates: [{date: "2025-12-01", title:"Public consultation deadline"}],
+    importantDates: [{date: "2025-12-01", title:"Public consultation deadline", tags: ["AML"]}],
     crossoverWithFCA: "FCA supervision applies to financial firms affected by AML guidance"
   },
   {
     name: "Home Office",
     news: [
-      { title: "Immigration reform announced", summary: "Policy update related to border and AML investigations.", link: "https://www.gov.uk/government/news/immigration-reform" }
+      { title: "Immigration reform announced", summary: "Policy update related to border and AML investigations.", link: "https://www.gov.uk/government/news/immigration-reform", tags: ["AML"] }
     ],
     priorities: ["Border security", "AML investigations support"],
-    importantDates: [{date: "2025-11-30", title:"Policy update release"}],
+    importantDates: [{date: "2025-11-30", title:"Policy update release", tags: ["AML"]}],
     crossoverWithFCA: "Collaboration with FCA on financial crime investigations"
   },
   {
     name: "HMRC",
     news: [
-      { title: "Crypto reporting requirements updated", summary: "HMRC updates crypto compliance and reporting obligations.", link: "https://www.gov.uk/government/news/crypto-reporting" }
+      { title: "Crypto reporting requirements updated", summary: "HMRC updates crypto compliance and reporting obligations.", link: "https://www.gov.uk/government/news/crypto-reporting", tags: ["Crypto", "AML", "Payment"] }
     ],
     priorities: ["Tax compliance", "AML supervision"],
-    importantDates: [{date: "2025-12-15", title:"New guidance on crypto"}],
+    importantDates: [{date: "2025-12-15", title:"New guidance on crypto", tags: ["Crypto", "AML"]}],
     crossoverWithFCA: "Aligns with FCA supervision for crypto-asset firms"
   },
   {
     name: "FATF",
     news: [
-      { title: "Next MER scheduled", summary: "The UK's next Mutual Evaluation Review will assess AML regime effectiveness.", link: "https://www.fatf-gafi.org/publications/mutualevaluations/" }
+      { title: "Next MER scheduled", summary: "The UK's next Mutual Evaluation Review will assess AML regime effectiveness.", link: "https://www.fatf-gafi.org/publications/mutualevaluations/", tags: ["AML"] }
     ],
     priorities: ["Global AML standards", "UK evaluation"],
-    importantDates: [{date: "2027-01-01", title:"UK Mutual Evaluation Review"}],
+    importantDates: [{date: "2027-01-01", title:"UK Mutual Evaluation Review", tags: ["AML"]}],
     crossoverWithFCA: "Ensures UK AML compliance is aligned with global FATF standards"
   },
   // Add other agencies similarly...
@@ -112,7 +118,8 @@ function createAgencySection(agency) {
   agency.news.forEach(n => {
     const item = document.createElement("div");
     item.className = "news-item";
-    item.innerHTML = `<strong>${n.title}</strong> - <a href="${n.link}" target="_blank">Read more</a><br>${n.summary}`;
+    const tagsHTML = n.tags.map(tag => `<span class="tag ${tag}">${tag}</span>`).join("");
+    item.innerHTML = `<strong>${n.title}</strong> - <a href="${n.link}" target="_blank">Read more</a><br>${n.summary}<br>${tagsHTML}`;
     div.appendChild(item);
   });
 
@@ -141,16 +148,18 @@ function createAgencySection(agency) {
   dashboard.appendChild(btn);
   dashboard.appendChild(div);
 
-  // Add to diary
+  // Add to diary table
   agency.importantDates.forEach(d => {
     const row = diaryBody.insertRow();
     row.insertCell(0).textContent = d.date;
     row.insertCell(1).textContent = agency.name;
     row.insertCell(2).textContent = d.title;
+    const tagsHTML = d.tags.map(tag => `<span class="tag ${tag}">${tag}</span>`).join(" ");
+    row.insertCell(3).innerHTML = tagsHTML;
   });
 }
 
-// Initialize
+// Initialize dashboard
 agenciesData.forEach(createAgencySection);
 
 // Search
