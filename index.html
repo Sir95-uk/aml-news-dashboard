@@ -5,99 +5,93 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Regulatory News Dashboard</title>
 <style>
-body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+body { font-family: Arial, sans-serif; padding: 20px; background: #f7f9fb; }
 h1 { color: #2c3e50; }
-.section { margin-bottom: 15px; border:1px solid #ccc; padding:10px; background:white; border-radius:5px; }
-button { padding: 8px 12px; margin-bottom: 5px; cursor:pointer; background:#2c3e50; color:white; border:none; border-radius:3px; }
-.content { display:none; margin-top:5px; }
-select { padding:5px; margin-bottom:15px; }
-.date { font-size: 0.9em; color: #555; }
+button { padding: 8px 12px; margin: 5px; cursor: pointer; border: none; background: #2c3e50; color: white; border-radius: 4px; }
+button:hover { background: #34495e; }
+.section { margin-bottom: 15px; }
+.content { display: none; margin-top: 8px; padding-left: 10px; border-left: 3px solid #2c3e50; }
+.filter { margin-bottom: 15px; }
+.news-item { background: #fff; padding: 8px; margin-bottom: 5px; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);}
 </style>
 </head>
 <body>
+
 <h1>Regulatory News Dashboard</h1>
 
-<label for="agencyFilter">Filter by Agency:</label>
-<select id="agencyFilter">
-  <option value="All">All</option>
+<div class="filter">
+<label for="agencySelect">Filter by Agency:</label>
+<select id="agencySelect">
+  <option value="all">All Agencies</option>
+  <option value="FCA">FCA</option>
+  <option value="HMRC">HMRC</option>
+  <option value="DWP">DWP</option>
+  <option value="OFCOM">OFCOM</option>
+  <option value="FATF">FATF</option>
+  <option value="Trading Standards">Trading Standards</option>
+  <option value="National Trading Standards">National Trading Standards</option>
 </select>
+</div>
 
 <div id="dashboard"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/rss-parser/dist/rss-parser.min.js"></script>
 <script>
-const parser = new RSSParser();
-const agencies = [
-  { name: "HM Treasury", url: "https://www.gov.uk/government/organisations/hm-treasury.atom" },
-  { name: "Home Office", url: "https://www.gov.uk/government/organisations/home-office.atom" },
-  { name: "HMRC", url: "https://www.gov.uk/government/organisations/hm-revenue-customs.atom" },
-  { name: "FATF", url: "https://www.fatf-gafi.org/publications/rss/" },
-  { name: "FCA", url: "https://www.fca.org.uk/news/rss.xml" },
-  { name: "Trading Standards", url: "https://www.tradingstandards.uk/rss/news" },
-  { name: "National Trading Standards", url: "https://www.nationaltradingstandards.uk/rss/news" },
-  { name: "DWP", url: "https://www.gov.uk/government/organisations/department-for-work-pensions.atom" },
-  { name: "OFCOM", url: "https://www.ofcom.org.uk/about-ofcom/latest/media/media-releases.atom" }
+// Example news JSON structure
+const newsData = [
+  { agency: "FCA", title: "FCA updates payment firms guidance", date: "2025-11-23", link: "#" },
+  { agency: "HMRC", title: "HMRC issues new AML guidance", date: "2025-11-22", link: "#" },
+  { agency: "DWP", title: "DWP fraud prevention alert", date: "2025-11-21", link: "#" },
+  { agency: "OFCOM", title: "OFCOM consults on telecom sanctions", date: "2025-11-20", link: "#" },
+  { agency: "FATF", title: "FATF publishes 2027 MER planning", date: "2025-11-19", link: "#" },
+  { agency: "Trading Standards", title: "Trading Standards warns of scam trends", date: "2025-11-18", link: "#" },
+  { agency: "National Trading Standards", title: "NTS publishes annual priorities", date: "2025-11-17", link: "#" },
 ];
 
-const dashboard = document.getElementById('dashboard');
-const filterSelect = document.getElementById('agencyFilter');
+// Function to render the dashboard
+function renderDashboard(filterAgency = "all") {
+  const container = document.getElementById("dashboard");
+  container.innerHTML = ""; // clear previous content
 
-// Populate filter dropdown
-agencies.forEach(a => {
-  const option = document.createElement('option');
-  option.value = a.name;
-  option.text = a.name;
-  filterSelect.appendChild(option);
-});
+  const agencies = [...new Set(newsData.map(n => n.agency))];
 
-// Fetch RSS feeds
-async function loadFeeds() {
-  dashboard.innerHTML = '';
-  for (let agency of agencies) {
-    try {
-      const feed = await parser.parseURL('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(agency.url));
-      feed.items.forEach(item => {
-        // Filter relevant content keywords
-        const keywords = ["money laundering", "fraud", "sanctions", "payment firms"];
-        if (!keywords.some(k => (item.title + item.content).toLowerCase().includes(k))) return;
+  agencies.forEach(agency => {
+    if (filterAgency !== "all" && agency !== filterAgency) return;
 
-        const section = document.createElement('div');
-        section.className = 'section';
-        section.setAttribute('data-agency', agency.name);
+    const section = document.createElement("div");
+    section.className = "section";
 
-        const btn = document.createElement('button');
-        btn.innerText = agency.name + ": " + item.title;
-        btn.onclick = () => {
-          const contentDiv = section.querySelector('.content');
-          contentDiv.style.display = contentDiv.style.display === 'block' ? 'none' : 'block';
-        };
+    const btn = document.createElement("button");
+    btn.textContent = agency;
+    btn.onclick = () => {
+      const contentDiv = section.querySelector(".content");
+      contentDiv.style.display = contentDiv.style.display === "block" ? "none" : "block";
+    };
 
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'content';
-        contentDiv.innerHTML = `
-          <p>${item.contentSnippet || item.content}</p>
-          <p class="date">Published: ${item.pubDate}</p>
-          <p><a href="${item.link}" target="_blank">Read full article</a></p>
-        `;
+    const content = document.createElement("div");
+    content.className = "content";
 
-        section.appendChild(btn);
-        section.appendChild(contentDiv);
-        dashboard.appendChild(section);
-      });
-    } catch (e) {
-      console.error("Failed to fetch feed for", agency.name, e);
-    }
-  }
+    const items = newsData.filter(n => n.agency === agency);
+    items.forEach(item => {
+      const newsDiv = document.createElement("div");
+      newsDiv.className = "news-item";
+      newsDiv.innerHTML = `<strong>${item.title}</strong> <br> Date: ${item.date} <br> <a href="${item.link}" target="_blank">Read more</a>`;
+      content.appendChild(newsDiv);
+    });
+
+    section.appendChild(btn);
+    section.appendChild(content);
+    container.appendChild(section);
+  });
 }
 
-filterSelect.addEventListener('change', () => {
-  const selected = filterSelect.value;
-  document.querySelectorAll('.section').forEach(sec => {
-    sec.style.display = (selected === "All" || sec.getAttribute('data-agency') === selected) ? 'block' : 'none';
-  });
-});
+// Initial render
+renderDashboard();
 
-loadFeeds();
+// Filter change
+document.getElementById("agencySelect").addEventListener("change", (e) => {
+  renderDashboard(e.target.value);
+});
 </script>
+
 </body>
 </html>
