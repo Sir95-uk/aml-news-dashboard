@@ -23,45 +23,63 @@ button:hover { background: #34495e; }
 <label for="agencySelect">Filter by Agency:</label>
 <select id="agencySelect">
   <option value="all">All Agencies</option>
-  <option value="FCA">FCA</option>
-  <option value="HMRC">HMRC</option>
-  <option value="DWP">DWP</option>
-  <option value="OFCOM">OFCOM</option>
-  <option value="FATF">FATF</option>
-  <option value="Trading Standards">Trading Standards</option>
-  <option value="National Trading Standards">National Trading Standards</option>
 </select>
 </div>
 
 <div id="dashboard"></div>
 
 <script>
-// Example news JSON structure
-const newsData = [
-  { agency: "FCA", title: "FCA updates payment firms guidance", date: "2025-11-23", link: "#" },
-  { agency: "HMRC", title: "HMRC issues new AML guidance", date: "2025-11-22", link: "#" },
-  { agency: "DWP", title: "DWP fraud prevention alert", date: "2025-11-21", link: "#" },
-  { agency: "OFCOM", title: "OFCOM consults on telecom sanctions", date: "2025-11-20", link: "#" },
-  { agency: "FATF", title: "FATF publishes 2027 MER planning", date: "2025-11-19", link: "#" },
-  { agency: "Trading Standards", title: "Trading Standards warns of scam trends", date: "2025-11-18", link: "#" },
-  { agency: "National Trading Standards", title: "NTS publishes annual priorities", date: "2025-11-17", link: "#" },
+const agencies = [
+  "FCA",
+  "HMRC",
+  "DWP",
+  "OFCOM",
+  "FATF",
+  "Trading Standards",
+  "National Trading Standards"
 ];
 
-// Function to render the dashboard
+let allNews = [];
+
+// Load JSON for each agency
+async function loadNews() {
+  for (const agency of agencies) {
+    try {
+      const file = agency.replace(/ /g, "_") + ".json"; // converts "Trading Standards" → "Trading_Standards.json"
+      const response = await fetch(file);
+      const data = await response.json();
+      allNews.push({ agency, items: data });
+    } catch (error) {
+      console.log("No JSON found for", agency);
+    }
+  }
+
+  populateFilter();
+  renderDashboard();
+}
+
+function populateFilter() {
+  const select = document.getElementById("agencySelect");
+  agencies.forEach(a => {
+    const option = document.createElement("option");
+    option.value = a;
+    option.textContent = a;
+    select.appendChild(option);
+  });
+}
+
 function renderDashboard(filterAgency = "all") {
   const container = document.getElementById("dashboard");
-  container.innerHTML = ""; // clear previous content
+  container.innerHTML = "";
 
-  const agencies = [...new Set(newsData.map(n => n.agency))];
-
-  agencies.forEach(agency => {
-    if (filterAgency !== "all" && agency !== filterAgency) return;
+  allNews.forEach(entry => {
+    if (filterAgency !== "all" && entry.agency !== filterAgency) return;
 
     const section = document.createElement("div");
     section.className = "section";
 
     const btn = document.createElement("button");
-    btn.textContent = agency;
+    btn.textContent = entry.agency;
     btn.onclick = () => {
       const contentDiv = section.querySelector(".content");
       contentDiv.style.display = contentDiv.style.display === "block" ? "none" : "block";
@@ -70,13 +88,20 @@ function renderDashboard(filterAgency = "all") {
     const content = document.createElement("div");
     content.className = "content";
 
-    const items = newsData.filter(n => n.agency === agency);
-    items.forEach(item => {
-      const newsDiv = document.createElement("div");
-      newsDiv.className = "news-item";
-      newsDiv.innerHTML = `<strong>${item.title}</strong> <br> Date: ${item.date} <br> <a href="${item.link}" target="_blank">Read more</a>`;
-      content.appendChild(newsDiv);
-    });
+    if (entry.items.length === 0) {
+      content.innerHTML = "<p>No updates available.</p>";
+    } else {
+      entry.items.forEach(item => {
+        const newsDiv = document.createElement("div");
+        newsDiv.className = "news-item";
+        newsDiv.innerHTML = `
+          <strong>${item.title}</strong><br>
+          Date: ${item.date}<br>
+          <a href="${item.link}" target="_blank">Read more</a>
+        `;
+        content.appendChild(newsDiv);
+      });
+    }
 
     section.appendChild(btn);
     section.appendChild(content);
@@ -84,13 +109,11 @@ function renderDashboard(filterAgency = "all") {
   });
 }
 
-// Initial render
-renderDashboard();
-
-// Filter change
 document.getElementById("agencySelect").addEventListener("change", (e) => {
   renderDashboard(e.target.value);
 });
+
+loadNews();
 </script>
 
 </body>
