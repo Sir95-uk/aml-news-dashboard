@@ -3,39 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AML & Regulatory Dashboard</title>
+<title>AML Dashboard Example</title>
 <style>
-body { font-family: Arial, sans-serif; padding: 20px; background: #f8f9fa; }
-h1 { color: #2c3e50; margin-bottom: 10px; }
-h2 { color: #34495e; margin-top: 20px; }
-button { display: block; width: 100%; padding: 10px; margin: 5px 0; background: #2c3e50; color: white; border: none; cursor: pointer; text-align: left; font-size: 16px; }
-button:hover { background: #34495e; }
-.content { display: none; padding: 10px 20px; margin-bottom: 10px; background: #ecf0f1; border-left: 4px solid #2c3e50; }
-.news-item { margin-bottom: 10px; }
-a { color: #1a73e8; text-decoration: none; }
-#search { margin-bottom: 15px; padding: 8px; width: 100%; font-size: 14px; }
-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-th { background: #2c3e50; color: white; }
-.tag { display: inline-block; padding: 2px 6px; margin-right: 5px; border-radius: 3px; font-size: 12px; color: white; }
-.tag.AML { background: #e67e22; }
-.tag.Fraud { background: #c0392b; }
-.tag.Crypto { background: #8e44ad; }
-.tag.Payment { background: #16a085; }
-.tag.Sanctions { background: #d35400; }
-#merCountdown { font-weight: bold; color: #e74c3c; margin-bottom: 15px; }
+body { font-family: Arial, sans-serif; padding: 20px; }
+h1 { color: #2c3e50; }
+button { display:block; width:100%; margin:5px 0; padding:10px; cursor:pointer; background:#2c3e50; color:white; border:none; text-align:left; }
+button:hover { background:#34495e; }
+.content { display:none; padding:10px; margin-bottom:10px; background:#ecf0f1; border-left:4px solid #2c3e50; }
+.tag { display:inline-block; padding:2px 6px; margin-right:5px; border-radius:3px; font-size:12px; color:white; }
+.tag.AML { background:#e67e22; }
+.tag.Fraud { background:#c0392b; }
+table { width:100%; border-collapse:collapse; margin-top:20px; }
+th, td { border:1px solid #ccc; padding:8px; }
+th { background:#2c3e50; color:white; }
 </style>
 </head>
 <body>
 
 <h1>AML & Regulatory Dashboard</h1>
-<p id="merCountdown">Loading MER countdown...</p>
-<input type="text" id="search" placeholder="Search news, summaries, priorities...">
 
 <div id="dashboard"></div>
 
 <h2>Diary of Important Dates</h2>
-<table id="diary">
+<table>
   <thead>
     <tr>
       <th>Date</th>
@@ -44,132 +34,59 @@ th { background: #2c3e50; color: white; }
       <th>Tags</th>
     </tr>
   </thead>
-  <tbody></tbody>
+  <tbody id="diary"></tbody>
 </table>
 
 <script>
-// Agencies data
 const agenciesData = [
   {
     name: "HM Treasury",
     news: [
-      { title: "New AML guidance published", summary: "Updated AML guidance sets expectations for UK financial firms.", link: "https://www.gov.uk/government/publications/aml-guidance", tags: ["AML"] },
-      { title: "Budget 2026 announced", summary: "HM Treasury presents new budget with AML compliance focus.", link: "https://www.gov.uk/government/news/budget-2026", tags: ["AML", "Payment"] }
+      { title:"New AML guidance", summary:"Updated AML rules for firms.", link:"#", tags:["AML"] },
+      { title:"Budget 2026", summary:"Budget focuses on AML compliance.", link:"#", tags:["AML","Payment"] }
     ],
-    priorities: ["Strengthening UK AML regime", "Economic oversight and regulatory reform"],
-    importantDates: [{date: "2025-12-01", title:"Public consultation deadline", tags: ["AML"]}],
-    crossoverWithFCA: "FCA supervision applies to financial firms affected by AML guidance"
+    importantDates: [{date:"2025-12-01", title:"Consultation deadline", tags:["AML"]}]
   },
   {
-    name: "Home Office",
-    news: [
-      { title: "Immigration reform announced", summary: "Policy update related to border and AML investigations.", link: "https://www.gov.uk/government/news/immigration-reform", tags: ["AML"] }
+    name:"Home Office",
+    news:[
+      { title:"Immigration reform", summary:"Policy update affects AML enforcement.", link:"#", tags:["AML"] }
     ],
-    priorities: ["Border security", "AML investigations support"],
-    importantDates: [{date: "2025-11-30", title:"Policy update release", tags: ["AML"]}],
-    crossoverWithFCA: "Collaboration with FCA on financial crime investigations"
-  },
-  {
-    name: "HMRC",
-    news: [
-      { title: "Crypto reporting requirements updated", summary: "HMRC updates crypto compliance and reporting obligations.", link: "https://www.gov.uk/government/news/crypto-reporting", tags: ["Crypto", "AML", "Payment"] }
-    ],
-    priorities: ["Tax compliance", "AML supervision"],
-    importantDates: [{date: "2025-12-15", title:"New guidance on crypto", tags: ["Crypto", "AML"]}],
-    crossoverWithFCA: "Aligns with FCA supervision for crypto-asset firms"
-  },
-  {
-    name: "FATF",
-    news: [
-      { title: "Next MER scheduled", summary: "The UK's next Mutual Evaluation Review will assess AML regime effectiveness.", link: "https://www.fatf-gafi.org/publications/mutualevaluations/", tags: ["AML"] }
-    ],
-    priorities: ["Global AML standards", "UK evaluation"],
-    importantDates: [{date: "2027-01-01", title:"UK Mutual Evaluation Review", tags: ["AML"]}],
-    crossoverWithFCA: "Ensures UK AML compliance is aligned with global FATF standards"
-  },
-  // Add other agencies similarly...
+    importantDates: [{date:"2025-11-30", title:"Policy release", tags:["AML"]}]
+  }
 ];
 
-// MER countdown
-const merDate = new Date("2027-01-01");
-function updateMERCountdown() {
-  const now = new Date();
-  const diffDays = Math.ceil((merDate - now) / (1000 * 60 * 60 * 24));
-  document.getElementById("merCountdown").textContent = `⏳ FATF MER 2027 in ${diffDays} days`;
-}
-updateMERCountdown();
-setInterval(updateMERCountdown, 3600000); // update every hour
-
-// Build dashboard
 const dashboard = document.getElementById("dashboard");
-const diaryBody = document.querySelector("#diary tbody");
+const diary = document.getElementById("diary");
 
-function createAgencySection(agency) {
+agenciesData.forEach(agency => {
+  // Collapsible section
   const btn = document.createElement("button");
   btn.textContent = agency.name;
-
   const div = document.createElement("div");
   div.className = "content";
 
-  // News
-  const newsHeader = document.createElement("h2");
-  newsHeader.textContent = "News";
-  div.appendChild(newsHeader);
   agency.news.forEach(n => {
     const item = document.createElement("div");
-    item.className = "news-item";
-    const tagsHTML = n.tags.map(tag => `<span class="tag ${tag}">${tag}</span>`).join("");
-    item.innerHTML = `<strong>${n.title}</strong> - <a href="${n.link}" target="_blank">Read more</a><br>${n.summary}<br>${tagsHTML}`;
+    item.innerHTML = `<strong>${n.title}</strong> - <a href="${n.link}" target="_blank">Read more</a><br>${n.summary}<br>` +
+                     n.tags.map(t => `<span class="tag ${t}">${t}</span>`).join(" ");
     div.appendChild(item);
   });
 
-  // Priorities
-  const prioritiesHeader = document.createElement("h2");
-  prioritiesHeader.textContent = "Priorities";
-  div.appendChild(prioritiesHeader);
-  div.innerHTML += `<p>${agency.priorities.join(", ")}</p>`;
-
-  // Important Dates
-  const datesHeader = document.createElement("h2");
-  datesHeader.textContent = "Important Dates";
-  div.appendChild(datesHeader);
-  div.innerHTML += `<p>${agency.importantDates.map(d => `${d.date}: ${d.title}`).join("<br>")}</p>`;
-
-  // FCA crossover
-  const crossoverHeader = document.createElement("h2");
-  crossoverHeader.textContent = "FCA Supervision / Crossover";
-  div.appendChild(crossoverHeader);
-  div.innerHTML += `<p>${agency.crossoverWithFCA}</p>`;
-
-  btn.addEventListener("click", () => {
-    div.style.display = div.style.display === "block" ? "none" : "block";
-  });
-
+  btn.addEventListener("click", ()=>div.style.display = div.style.display==="block"?"none":"block");
   dashboard.appendChild(btn);
   dashboard.appendChild(div);
 
-  // Add to diary table
+  // Diary
   agency.importantDates.forEach(d => {
-    const row = diaryBody.insertRow();
+    const row = diary.insertRow();
     row.insertCell(0).textContent = d.date;
     row.insertCell(1).textContent = agency.name;
     row.insertCell(2).textContent = d.title;
-    const tagsHTML = d.tags.map(tag => `<span class="tag ${tag}">${tag}</span>`).join(" ");
-    row.insertCell(3).innerHTML = tagsHTML;
-  });
-}
-
-// Initialize dashboard
-agenciesData.forEach(createAgencySection);
-
-// Search
-document.getElementById("search").addEventListener("input", function() {
-  const term = this.value.toLowerCase();
-  document.querySelectorAll(".content").forEach(div => {
-    const text = div.textContent.toLowerCase();
-    div.style.display = text.includes(term) ? "block" : "none";
+    row.insertCell(3).innerHTML = d.tags.map(t => `<span class="tag ${t}">${t}</span>`).join(" ");
   });
 });
 </script>
+
 </body>
 </html>
