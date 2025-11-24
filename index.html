@@ -3,57 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AML & Regulatory Dashboard</title>
+<title>Regulatory News Dashboard</title>
 <style>
-body { font-family: Arial, sans-serif; padding: 20px; background:#f4f4f4; }
+body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
 h1 { color: #2c3e50; }
 .section { margin-bottom: 15px; border:1px solid #ccc; padding:10px; background:white; border-radius:5px; }
 button { padding: 8px 12px; margin-bottom: 5px; cursor:pointer; background:#2c3e50; color:white; border:none; border-radius:3px; }
 .content { display:none; margin-top:5px; }
-.lastUpdated { font-style:italic; color: #555; margin-bottom:20px; }
+select { padding:5px; margin-bottom:15px; }
+.date { font-size: 0.9em; color: #555; }
 </style>
 </head>
 <body>
-<h1>AML & Regulatory Dashboard</h1>
-<div class="lastUpdated" id="lastUpdated"></div>
+<h1>Regulatory News Dashboard</h1>
+
+<label for="agencyFilter">Filter by Agency:</label>
+<select id="agencyFilter">
+  <option value="All">All</option>
+</select>
+
 <div id="dashboard"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/rss-parser/dist/rss-parser.min.js"></script>
 <script>
-// Load JSON data
-async function loadData() {
-  const response = await fetch('data.json');
-  const data = await response.json();
+const parser = new RSSParser();
+const agencies = [
+  { name: "HM Treasury", url: "https://www.gov.uk/government/organisations/hm-treasury.atom" },
+  { name: "Home Office", url: "https://www.gov.uk/government/organisations/home-office.atom" },
+  { name: "HMRC", url: "https://www.gov.uk/government/organisations/hm-revenue-customs.atom" },
+  { name: "FATF", url: "https://www.fatf-gafi.org/publications/rss/" }
+];
 
-  document.getElementById('lastUpdated').innerText = "Last Updated: " + data.lastUpdated;
+const dashboard = document.getElementById('dashboard');
+const filterSelect = document.getElementById('agencyFilter');
 
-  const container = document.getElementById('dashboard');
+// Populate filter dropdown
+agencies.forEach(a => {
+  const option = document.createElement('option');
+  option.value = a.name;
+  option.text = a.name;
+  filterSelect.appendChild(option);
+});
 
-  data.agencies.forEach(agency => {
-    const section = document.createElement('div');
-    section.className = 'section';
+// Fetch RSS feeds
+async function loadFeeds() {
+  dashboard.innerHTML = '';
+  for (let agency of agencies) {
+    try {
+      const feed = await parser.parseURL('https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(agency.url));
+      feed.items.forEach(item => {
+        const section = document.createElement('div');
+        section.className = 'section';
+        section.setAttribute('data-agency', agency.name);
 
-    const btn = document.createElement('button');
-    btn.innerText = agency.name;
-    btn.onclick = () => {
-      const contentDiv = section.querySelector('.content');
-      contentDiv.style.display = contentDiv.style.display === 'block' ? 'none' : 'block';
-    };
+        const btn = document.createElement('button');
+        btn.innerText = agency.name + ": " + item.title;
+        btn.onclick = () => {
+          const contentDiv = section.querySelector('.content');
+          contentDiv.style.display = contentDiv.style.display === 'block' ? 'none' : 'block';
+        };
 
-    const contentDiv = document.createElement('div');
-    contentDiv.className = 'content';
-    contentDiv.innerHTML = `
-      <strong>News:</strong><ul>${agency.news.map(n => `<li>${n}</li>`).join('')}</ul>
-      <strong>Priorities:</strong><ul>${agency.priorities.map(p => `<li>${p}</li>`).join('')}</ul>
-      <strong>Important Dates:</strong><ul>${agency.importantDates.map(d => `<li>${d}</li>`).join('')}</ul>
-    `;
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'content';
+        contentDiv.innerHTML = `
+          <p>${item.contentSnippet || item.content}</p>
+          <p class="date">Published: ${item.pubDate}</p>
+          <p><a href="${item.link}" target="_blank">Read full article</a></p>
+        `;
 
-    section.appendChild(btn);
-    section.appendChild(contentDiv);
-    container.appendChild(section);
-  });
+        section.appendChild(btn);
+        section.appendChild(contentDiv);
+        dashboard.appendChild(section);
+      });
+    } catch (e) {
+      console.error("Failed to fetch feed for", agency.name, e);
+    }
+  }
 }
 
-loadData();
+filterSelect.addEventListener('change', () => {
+  const selected = filterSelect.value;
+  document.querySelectorAll('.section').forEach(sec => {
+    sec.style.display = (selected === "All" || sec.getAttribute('data-agency') === selected) ? 'block' : 'none';
+  });
+});
+
+loadFeeds();
 </script>
 </body>
 </html>
