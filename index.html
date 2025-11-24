@@ -7,6 +7,7 @@
 <style>
   body { font-family: Arial, sans-serif; padding: 20px; background: #f5f7fa; }
   h1 { color: #1f2a38; text-align: center; }
+  h2 { color: #1f2a38; margin-top: 30px; }
   .section { margin-bottom: 20px; border-radius: 8px; overflow: hidden; transition: all 0.3s ease; }
   button { width: 100%; text-align: left; padding: 12px 15px; font-size: 16px; cursor: pointer; border: none; outline: none; color: #1f2a38; font-weight: bold; }
   button.hm-treasury { background: #ffe0e0; }
@@ -21,6 +22,7 @@
   .content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.4s ease; padding: 0 15px; opacity: 0; background: #fff; }
   .content.open { opacity: 1; padding: 10px 15px; }
   p, li { margin: 5px 0; }
+  a { color: #1f2a38; text-decoration: underline; }
   table { width: 100%; border-collapse: collapse; margin-top: 10px; }
   th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
   tr:hover { background-color: #f0f0f0; }
@@ -28,7 +30,7 @@
 </head>
 <body>
 <h1>AML & Regulatory Dashboard</h1>
-<p>Auto-loaded from agencies.json — shows news, summaries, priorities, and dates.</p>
+<p>Auto-loaded — shows news, summaries, priorities, and dates. Expand sections to view details.</p>
 
 <div id="dashboard"></div>
 
@@ -46,10 +48,10 @@
 </table>
 
 <script>
-// Agencies data
 const agenciesData = [
   {
     name: "HM Treasury",
+    subtitle: "Crossover with FCA: Financial regulations & AML compliance",
     news: [
       { title: "New AML guidance", summary: "Updated AML rules for firms.", tags: ["AML"], link:"https://www.gov.uk/government/publications/anti-money-laundering-guidance" },
       { title: "Budget 2026", summary: "Budget focuses on AML compliance.", tags: ["AML","Payment"], link:"https://www.gov.uk/government/publications/budget-2026" }
@@ -59,6 +61,7 @@ const agenciesData = [
   },
   {
     name: "Home Office",
+    subtitle: "Crossover with FCA: Border security & AML investigations",
     news: [
       { title: "Immigration reform announced", summary: "Policy update related to border and AML investigations.", tags:["AML"], link:"https://www.gov.uk/government/news/immigration-reform" }
     ],
@@ -67,6 +70,7 @@ const agenciesData = [
   },
   {
     name: "HMRC",
+    subtitle: "Crossover with FCA: Tax compliance & crypto supervision",
     news: [
       { title: "Crypto reporting requirements updated", summary: "New guidance for crypto transactions.", tags:["AML","Crypto"], link:"https://www.gov.uk/government/organisations/hm-revenue-customs" }
     ],
@@ -75,6 +79,7 @@ const agenciesData = [
   },
   {
     name: "FATF",
+    subtitle: "Global AML standards & UK evaluation",
     news: [
       { title: "Next MER scheduled", summary: "UK evaluation of AML regime effectiveness.", tags:["AML","Global"], link:"https://www.fatf-gafi.org/publications/mutualevaluations/" }
     ],
@@ -83,6 +88,7 @@ const agenciesData = [
   },
   {
     name: "FCA",
+    subtitle: "Supervision of authorized firms & crypto oversight",
     news: [
       { title: "REP CRIM update guidance released", summary: "New guidance for authorized firms.", tags:["AML","FCA"], link:"https://www.fca.org.uk/news/press-releases" }
     ],
@@ -91,6 +97,7 @@ const agenciesData = [
   },
   {
     name: "OFCOM",
+    subtitle: "Crossover with FCA: Communications oversight",
     news: [
       { title: "Telecom sector regulatory update", summary: "Ongoing supervision of digital communications.", tags:["Regulation","Telecom"], link:"https://www.ofcom.org.uk/news" }
     ],
@@ -99,6 +106,7 @@ const agenciesData = [
   },
   {
     name: "Trading Standards",
+    subtitle: "Consumer fraud monitoring",
     news: [
       { title: "Consumer fraud alerts", summary: "Updates on recent scams.", tags:["Fraud","Consumer"], link:"https://www.tradingstandards.uk/news" }
     ],
@@ -107,6 +115,7 @@ const agenciesData = [
   },
   {
     name: "National Trading Standards",
+    subtitle: "National oversight & coordination",
     news: [
       { title: "National fraud reporting", summary: "Summary of national scam cases.", tags:["Fraud"], link:"https://www.nationaltradingstandards.uk/news" }
     ],
@@ -115,6 +124,7 @@ const agenciesData = [
   },
   {
     name: "DWP",
+    subtitle: "Benefit fraud & integrity",
     news: [
       { title: "Benefit fraud update", summary: "Measures to reduce fraud in benefits system.", tags:["Fraud","DWP"], link:"https://www.gov.uk/government/organisations/department-for-work-pensions" }
     ],
@@ -141,11 +151,9 @@ agenciesData.forEach((agency) => {
 
   const content = document.createElement('div');
   content.className = 'content';
-
-  const newsHTML = agency.news.map(n => `<p><strong>${n.title}</strong> - ${n.summary} <a href="${n.link}" target="_blank">Read more</a></p>`).join('');
-  const prioritiesHTML = `<p><strong>Priorities:</strong> ${agency.priorities.join(', ')}</p>`;
-
-  content.innerHTML = newsHTML + prioritiesHTML;
+  content.innerHTML = `<p><em>${agency.subtitle}</em></p>` +
+    agency.news.map(n => `<p><strong>${n.title}</strong> - ${n.summary} <a href="${n.link}" target="_blank">Read more</a></p>`).join('') +
+    `<p><strong>Priorities:</strong> ${agency.priorities.join(', ')}</p>`;
   section.appendChild(content);
 
   dashboard.appendChild(section);
