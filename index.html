@@ -5,21 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AML & Regulatory Dashboard</title>
 <style>
-body { font-family: Arial, sans-serif; padding: 20px; background-color: #f9f9f9; }
-h1 { color: #2c3e50; }
-h2 { color: #34495e; margin-top: 20px; }
-.section { margin-bottom: 20px; border: 1px solid #ddd; padding: 10px; border-radius: 5px; background: #fff; }
-button { padding: 8px 12px; cursor: pointer; margin-top: 5px; }
-.content { display: none; margin-top: 10px; }
-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-table, th, td { border: 1px solid #ccc; }
-th, td { padding: 8px; text-align: left; }
-.tag { display:inline-block; background:#3498db; color:white; padding:2px 6px; border-radius:3px; margin-right:4px; font-size:12px;}
+body { font-family: Arial, sans-serif; background: #f0f4f7; padding: 20px; }
+h1, h2 { color: #1a3e5c; }
+.section { margin-bottom: 15px; border-radius: 8px; padding: 10px; color: #fff; }
+button { cursor: pointer; margin: 5px 0; padding: 8px 12px; border-radius: 4px; border: none; font-weight: bold; }
+button:hover { opacity: 0.8; }
+.content { display: none; margin-top: 10px; padding: 10px; border-radius: 6px; background: rgba(255,255,255,0.9); color: #000; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; border-radius: 6px; overflow: hidden; }
+th, td { padding: 8px; border-bottom: 1px solid #ddd; text-align: left; }
+tr:nth-child(even) { background: #f2f2f2; }
+.tag { display:inline-block; padding: 3px 6px; border-radius: 4px; margin-right:4px; font-size:12px; color:#fff; font-weight:bold; }
+#filter, #search { margin:5px 10px 20px 0; padding:5px; border-radius:4px; border:1px solid #ccc; }
 </style>
 </head>
 <body>
+
 <h1>AML & Regulatory Dashboard</h1>
-<p>Click an agency to view news, summaries, priorities, and important dates.</p>
+
+<label for="filter">Filter by Agency:</label>
+<select id="filter">
+  <option value="all">All Agencies</option>
+</select>
+
+<label for="search">Search:</label>
+<input type="text" id="search" placeholder="Search news, priorities, tags...">
 
 <div id="dashboard"></div>
 
@@ -37,130 +46,103 @@ th, td { padding: 8px; text-align: left; }
 </table>
 
 <script>
-// Sample data
+// --- Sample Data ---
 const agencies = [
-  {
-    name: "HM Treasury",
-    news: [
-      { title: "New AML guidance", summary: "Updated AML rules for firms.", url: "#", tags: ["AML"] },
-      { title: "Budget 2026", summary: "Budget focuses on AML compliance.", url: "#", tags: ["AML", "Payment"] }
-    ],
-    priorities: ["Strengthening UK AML regime", "Economic oversight and regulatory reform"],
-    importantDates: [{ date: "2025-12-01", title: "Consultation deadline", tags: ["AML"] }]
+  { name: "HM Treasury", color:"#3498db", news:[
+      { title:"New AML guidance", summary:"Updated AML rules for UK financial firms.", url:"#", tags:["AML"] },
+      { title:"Budget 2026", summary:"Focuses on AML compliance and economic oversight.", url:"#", tags:["AML","Payment"] }
+    ], priorities:["Strengthening UK AML regime","Economic oversight"], dates:[{date:"2025-12-01", title:"Consultation deadline", tags:["AML"]}]
   },
-  {
-    name: "Home Office",
-    news: [
-      { title: "Immigration reform announced", summary: "Policy update related to border and AML investigations.", url: "#", tags: ["AML", "Fraud"] }
-    ],
-    priorities: ["Border security", "AML investigations support"],
-    importantDates: [{ date: "2025-11-30", title: "Policy release", tags: ["AML"] }]
+  { name: "Home Office", color:"#e67e22", news:[
+      { title:"Immigration reform", summary:"Policy update for border and AML investigations.", url:"#", tags:["AML","Fraud"] }
+    ], priorities:["Border security","AML support"], dates:[{date:"2025-11-30", title:"Policy release", tags:["AML"]}]
   },
-  {
-    name: "HMRC",
-    news: [
-      { title: "Crypto reporting requirements updated", summary: "New guidance on crypto tax reporting and AML compliance.", url: "#", tags: ["AML", "Crypto"] }
-    ],
-    priorities: ["Tax compliance", "AML supervision"],
-    importantDates: [{ date: "2025-12-15", title: "Crypto guidance deadline", tags: ["Crypto", "AML"] }]
+  { name: "HMRC", color:"#2ecc71", news:[
+      { title:"Crypto reporting updated", summary:"New guidance on cryptocurrency reporting for compliance.", url:"#", tags:["Crypto","AML"] }
+    ], priorities:["Tax compliance","AML supervision"], dates:[{date:"2025-12-15", title:"Crypto guidance", tags:["Crypto","AML"]}]
   },
-  {
-    name: "FATF",
-    news: [
-      { title: "Next MER scheduled", summary: "UK's Mutual Evaluation Review in 2027 will assess AML regime.", url: "#", tags: ["AML"] }
-    ],
-    priorities: ["Global AML standards", "UK evaluation"],
-    importantDates: [{ date: "2027-01-01", title: "FATF MER", tags: ["AML", "International"] }]
+  { name: "FATF", color:"#9b59b6", news:[
+      { title:"Next MER scheduled", summary:"UK's next Mutual Evaluation Review (MER) assessing AML regime.", url:"#", tags:["AML","Global"] }
+    ], priorities:["Global AML standards","UK evaluation"], dates:[{date:"2027-01-01", title:"FATF MER 2027", tags:["AML","Global"]}]
   },
-  {
-    name: "FCA",
-    news: [
-      { title: "REP CRIM update guidance released", summary: "Supervision of authorized firms updated.", url: "#", tags: ["AML", "Payment"] }
-    ],
-    priorities: ["Supervision of authorized firms", "Crypto oversight"],
-    importantDates: [{ date: "2025-12-10", title: "Compliance check deadline", tags: ["FCA", "AML"] }]
-  },
-  {
-    name: "OFCOM",
-    news: [
-      { title: "Telecom regulation update", summary: "New rules affecting payment firms and fraud reporting.", url: "#", tags: ["Payment", "Fraud"] }
-    ],
-    priorities: ["Supervision of communications", "Consumer protection"],
-    importantDates: [{ date: "2025-11-28", title: "Consultation period end", tags: ["OFCOM", "Payment"] }]
-  },
-  {
-    name: "Trading Standards",
-    news: [
-      { title: "Consumer fraud guidance updated", summary: "Guidance to protect consumers from financial scams.", url: "#", tags: ["Fraud", "AML"] }
-    ],
-    priorities: ["Consumer protection", "AML awareness"],
-    importantDates: [{ date: "2025-12-05", title: "Guidance publication", tags: ["Fraud"] }]
-  },
-  {
-    name: "National Trading Standards",
-    news: [
-      { title: "National fraud reporting system update", summary: "Enhanced reporting of financial crimes.", url: "#", tags: ["Fraud", "Payment"] }
-    ],
-    priorities: ["National fraud strategy", "AML education"],
-    importantDates: [{ date: "2025-12-08", title: "System go-live", tags: ["Fraud"] }]
-  },
-  {
-    name: "DWP",
-    news: [
-      { title: "Welfare fraud prevention initiative", summary: "New measures to detect AML & fraud.", url: "#", tags: ["AML", "Fraud"] }
-    ],
-    priorities: ["Fraud detection", "AML compliance"],
-    importantDates: [{ date: "2025-12-12", title: "Implementation start", tags: ["Fraud"] }]
+  { name: "FCA", color:"#e74c3c", news:[
+      { title:"REP CRIM guidance released", summary:"Updated guidance for reporting obligations.", url:"#", tags:["AML","Payment"] }
+    ], priorities:["Supervision of authorized firms","Crypto oversight"], dates:[{date:"2025-12-10", title:"Compliance deadline", tags:["AML","Payment"]}]
   }
 ];
 
-// Build dashboard
+// --- Populate Filter ---
+const filter = document.getElementById("filter");
+agencies.forEach(a => {
+  const opt = document.createElement("option");
+  opt.value = a.name;
+  opt.textContent = a.name;
+  filter.appendChild(opt);
+});
+
+// --- Render Dashboard ---
 const dashboard = document.getElementById("dashboard");
 const diaryBody = document.querySelector("#diary tbody");
 
-agencies.forEach(agency => {
-  const section = document.createElement("div");
-  section.className = "section";
-  const btn = document.createElement("button");
-  btn.textContent = agency.name;
-  section.appendChild(btn);
-  const content = document.createElement("div");
-  content.className = "content";
+function renderDashboard(filterValue="", search="") {
+  dashboard.innerHTML = "";
+  diaryBody.innerHTML = "";
+  agencies.forEach(a => {
+    if(filterValue && filterValue !== "all" && a.name !== filterValue) return;
+    // Filter search
+    const hasSearch = search.toLowerCase();
+    const match = a.news.some(n => n.title.toLowerCase().includes(hasSearch) || n.summary.toLowerCase().includes(hasSearch) || n.tags.join().toLowerCase().includes(hasSearch));
+    if(search && !match) return;
 
-  const newsHeader = document.createElement("h3");
-  newsHeader.textContent = "News";
-  content.appendChild(newsHeader);
-  agency.news.forEach(n => {
-    const p = document.createElement("p");
-    p.innerHTML = `<strong>${n.title}</strong> - <a href="${n.url}" target="_blank">Read more</a><br>${n.summary}<br>${n.tags.map(t => `<span class="tag">${t}</span>`).join("")}`;
-    content.appendChild(p);
+    const section = document.createElement("div");
+    section.className="section";
+    section.style.background=a.color;
+
+    const btn = document.createElement("button");
+    btn.textContent=a.name;
+    btn.onclick=()=>{ content.style.display=content.style.display==="block"?"none":"block"; };
+    section.appendChild(btn);
+
+    const content = document.createElement("div");
+    content.className="content";
+
+    const hNews = document.createElement("h3");
+    hNews.textContent="News & Updates";
+    content.appendChild(hNews);
+
+    a.news.forEach(n=>{
+      const p = document.createElement("p");
+      const tags = n.tags.map(t=>`<span class="tag" style="background:${a.color}">${t}</span>`).join(" ");
+      p.innerHTML=`<strong>${n.title}</strong> - <a href="${n.url}" target="_blank">Read more</a><br>${n.summary}<br>${tags}`;
+      content.appendChild(p);
+    });
+
+    const hPri = document.createElement("h3");
+    hPri.textContent="Priorities";
+    content.appendChild(hPri);
+    const pri = document.createElement("ul");
+    a.priorities.forEach(p=>{ const li=document.createElement("li"); li.textContent=p; pri.appendChild(li); });
+    content.appendChild(pri);
+
+    section.appendChild(content);
+    dashboard.appendChild(section);
+
+    // Populate diary
+    a.dates.forEach(d=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML=`<td>${d.date}</td><td>${a.name}</td><td>${d.title}</td><td>${d.tags.join(", ")}</td>`;
+      diaryBody.appendChild(tr);
+    });
   });
+}
 
-  const prioHeader = document.createElement("h3");
-  prioHeader.textContent = "Priorities";
-  content.appendChild(prioHeader);
-  const ul = document.createElement("ul");
-  agency.priorities.forEach(p => {
-    const li = document.createElement("li");
-    li.textContent = p;
-    ul.appendChild(li);
-  });
-  content.appendChild(ul);
+// --- Initial render ---
+renderDashboard();
 
-  btn.addEventListener("click", () => {
-    content.style.display = content.style.display === "block" ? "none" : "block";
-  });
+// --- Event Listeners ---
+filter.addEventListener("change", ()=>{ renderDashboard(filter.value, document.getElementById("search").value); });
+document.getElementById("search").addEventListener("input", ()=>{ renderDashboard(filter.value, document.getElementById("search").value); });
 
-  section.appendChild(content);
-  dashboard.appendChild(section);
-
-  // Fill diary table
-  agency.importantDates.forEach(d => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${d.date}</td><td>${agency.name}</td><td>${d.title}</td><td>${d.tags.join(", ")}</td>`;
-    diaryBody.appendChild(tr);
-  });
-});
 </script>
 </body>
 </html>
