@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AML & Regulatory Dashboard</title>
+<style>
+body { font-family: Arial, sans-serif; padding: 20px; background:#f4f4f4; }
+h1 { color: #2c3e50; }
+.section { margin-bottom: 15px; border:1px solid #ccc; padding:10px; background:white; border-radius:5px; }
+button { padding: 8px 12px; margin-bottom: 5px; cursor:pointer; background:#2c3e50; color:white; border:none; border-radius:3px; }
+.content { display:none; margin-top:5px; }
+.lastUpdated { font-style:italic; color: #555; margin-bottom:20px; }
+</style>
+</head>
+<body>
+<h1>AML & Regulatory Dashboard</h1>
+<div class="lastUpdated" id="lastUpdated"></div>
+<div id="dashboard"></div>
+
+<script>
+// Load JSON data
+async function loadData() {
+  const response = await fetch('data.json');
+  const data = await response.json();
+
+  document.getElementById('lastUpdated').innerText = "Last Updated: " + data.lastUpdated;
+
+  const container = document.getElementById('dashboard');
+
+  data.agencies.forEach(agency => {
+    const section = document.createElement('div');
+    section.className = 'section';
+
+    const btn = document.createElement('button');
+    btn.innerText = agency.name;
+    btn.onclick = () => {
+      const contentDiv = section.querySelector('.content');
+      contentDiv.style.display = contentDiv.style.display === 'block' ? 'none' : 'block';
+    };
+
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'content';
+    contentDiv.innerHTML = `
+      <strong>News:</strong><ul>${agency.news.map(n => `<li>${n}</li>`).join('')}</ul>
+      <strong>Priorities:</strong><ul>${agency.priorities.map(p => `<li>${p}</li>`).join('')}</ul>
+      <strong>Important Dates:</strong><ul>${agency.importantDates.map(d => `<li>${d}</li>`).join('')}</ul>
+    `;
+
+    section.appendChild(btn);
+    section.appendChild(contentDiv);
+    container.appendChild(section);
+  });
+}
+
+loadData();
+</script>
+</body>
+</html>
