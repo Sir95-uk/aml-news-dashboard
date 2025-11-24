@@ -4,12 +4,16 @@
     {
       "name": "HM Treasury",
       "news": [
-        "New AML guidance published",
-        "Budget announcement 2026"
-      ],
-      "summary": [
-        "HM Treasury issued updated guidance on Anti-Money Laundering for financial institutions.",
-        "The 2026 Budget included funding and policy changes affecting AML supervision and enforcement."
+        {
+          "title": "New AML guidance published",
+          "link": "https://www.gov.uk/government/publications/aml-guidance",
+          "summary": "HM Treasury issued updated guidance on Anti-Money Laundering for financial institutions, clarifying responsibilities for firms."
+        },
+        {
+          "title": "Budget announcement 2026",
+          "link": "https://www.gov.uk/government/publications/budget-2026-documents",
+          "summary": "The 2026 Budget included funding and policy changes affecting AML supervision and enforcement."
+        }
       ],
       "priorities": [
         "Strengthening the UK AML regime",
@@ -17,17 +21,22 @@
       ],
       "importantDates": [
         "2025-12-01: Public consultation deadline for AML guidance"
-      ]
+      ],
+      "crossoverWithFCA": "Supports FCA supervision and regulatory alignment for financial institutions."
     },
     {
       "name": "Home Office",
       "news": [
-        "Immigration and AML support update",
-        "National Crime Agency collaboration guidance"
-      ],
-      "summary": [
-        "Updates on immigration enforcement and supporting AML investigations.",
-        "Guidance for collaborating with the NCA on suspicious activity reporting and enforcement."
+        {
+          "title": "Immigration and AML support update",
+          "link": "https://www.gov.uk/government/news/immigration-aml-update",
+          "summary": "Updates on immigration enforcement and supporting AML investigations."
+        },
+        {
+          "title": "National Crime Agency collaboration guidance",
+          "link": "https://www.gov.uk/government/publications/nca-collaboration-guidance",
+          "summary": "Guidance for collaborating with the NCA on suspicious activity reporting and enforcement."
+        }
       ],
       "priorities": [
         "Border security",
@@ -36,17 +45,22 @@
       ],
       "importantDates": [
         "2025-11-30: Release of policy update for border and AML enforcement"
-      ]
+      ],
+      "crossoverWithFCA": "Coordinates with FCA on reporting suspicious activity and AML compliance."
     },
     {
       "name": "HMRC",
       "news": [
-        "Crypto reporting requirements updated",
-        "Enhanced tax compliance guidance"
-      ],
-      "summary": [
-        "HMRC updated reporting obligations for crypto firms under AML regulations.",
-        "Guidance issued for ongoing tax compliance and suspicious activity monitoring."
+        {
+          "title": "Crypto reporting requirements updated",
+          "link": "https://www.gov.uk/government/publications/crypto-asset-reporting-guidance",
+          "summary": "HMRC updated reporting obligations for crypto firms under AML regulations."
+        },
+        {
+          "title": "Enhanced tax compliance guidance",
+          "link": "https://www.gov.uk/government/publications/tax-compliance-guidance",
+          "summary": "Guidance issued for ongoing tax compliance and suspicious activity monitoring."
+        }
       ],
       "priorities": [
         "Tax compliance",
@@ -55,15 +69,17 @@
       ],
       "importantDates": [
         "2025-12-15: New crypto reporting guidance effective"
-      ]
+      ],
+      "crossoverWithFCA": "Crypto and financial transaction oversight in line with FCA requirements."
     },
     {
       "name": "FATF",
       "news": [
-        "Next Mutual Evaluation Review scheduled"
-      ],
-      "summary": [
-        "The FATF will review the UK's AML/CFT framework in the 2027 MER, assessing AMLAR implementation, crypto regulation, and SAR quality."
+        {
+          "title": "Next Mutual Evaluation Review scheduled",
+          "link": "https://www.fatf-gafi.org/publications/mutualevaluation/",
+          "summary": "FATF will review the UK's AML/CFT framework in the 2027 MER, assessing AMLAR implementation, crypto regulation, and SAR quality."
+        }
       ],
       "priorities": [
         "Global AML standards",
@@ -71,98 +87,8 @@
       ],
       "importantDates": [
         "2027: UK Mutual Evaluation Review"
-      ]
-    },
-    {
-      "name": "FCA",
-      "news": [
-        "REP CRIM guidance updated",
-        "Crypto supervision guidance"
       ],
-      "summary": [
-        "FCA released updated guidance on reporting suspicious activity under REP CRIM.",
-        "Additional guidance on crypto oversight and payment firms compliance."
-      ],
-      "priorities": [
-        "Supervision of authorized firms",
-        "Enforcing AML obligations",
-        "Crypto market oversight"
-      ],
-      "importantDates": [
-        "2025-12-10: Compliance check deadline"
-      ]
-    },
-    {
-      "name": "OFCOM",
-      "news": [
-        "Telecoms AML compliance guidance",
-        "Customer due diligence updates"
-      ],
-      "summary": [
-        "OFCOM released guidance on AML obligations for telecom operators.",
-        "Emphasis on KYC and monitoring of high-risk transactions."
-      ],
-      "priorities": [
-        "Supervision of telecom providers",
-        "AML and fraud detection"
-      ],
-      "importantDates": [
-        "2025-12-05: AML compliance update published"
-      ]
-    },
-    {
-      "name": "Trading Standards",
-      "news": [
-        "Consumer fraud alerts",
-        "Business compliance campaigns"
-      ],
-      "summary": [
-        "Trading Standards issued alerts on emerging consumer fraud schemes.",
-        "Campaigns to ensure small businesses comply with AML and payment regulations."
-      ],
-      "priorities": [
-        "Consumer protection",
-        "AML and fraud prevention"
-      ],
-      "importantDates": [
-        "2025-12-08: Launch of business compliance campaign"
-      ]
-    },
-    {
-      "name": "National Trading Standards",
-      "news": [
-        "Coordinated enforcement strategy",
-        "Suspicious transaction reporting guidance"
-      ],
-      "summary": [
-        "National Trading Standards issued guidance for enforcement teams on identifying suspicious activity.",
-        "Focus on AML compliance across high-risk sectors."
-      ],
-      "priorities": [
-        "Coordinated AML enforcement",
-        "Cross-agency intelligence sharing"
-      ],
-      "importantDates": [
-        "2025-12-12: Strategy update release"
-      ]
-    },
-    {
-      "name": "DWP",
-      "news": [
-        "Fraud prevention in benefits payments",
-        "AML training for staff"
-      ],
-      "summary": [
-        "DWP issued measures to detect and prevent fraud in welfare payments.",
-        "Staff training to improve awareness of AML risks in benefit distribution."
-      ],
-      "priorities": [
-        "Benefits fraud prevention",
-        "AML awareness in social security"
-      ],
-      "importantDates": [
-        "2025-12-20: New fraud prevention measures go live"
-      ]
+      "crossoverWithFCA": "Ensures UK AML frameworks monitored by FATF align with FCA enforcement expectations."
     }
   ]
 }
