@@ -4,37 +4,80 @@
     {
       "name": "HM Treasury",
       "news": ["New AML guidance published", "Budget announcement 2026"],
-      "summary": ["Guidance on strengthening AML supervision and asset recovery", "Annual budget plans affecting financial oversight"],
+      "summary": [
+        "Guidance on strengthening AML supervision and asset recovery powers for firms.",
+        "Annual budget plans affecting financial oversight and compliance expectations."
+      ],
       "priorities": ["Strengthening UK AML regime", "Economic oversight"],
       "importantDates": ["2025-12-01: Public consultation deadline"]
     },
     {
       "name": "Home Office",
-      "news": ["Immigration reform announced"],
-      "summary": ["Updates to immigration policy relevant to AML investigations"],
+      "news": ["Immigration reform announced", "New AML cooperation framework"],
+      "summary": [
+        "Updates to immigration policy relevant to AML investigations.",
+        "Framework to improve AML intelligence sharing across agencies."
+      ],
       "priorities": ["Border security", "AML investigations support"],
       "importantDates": ["2025-11-30: Policy update release"]
     },
     {
       "name": "HMRC",
-      "news": ["Crypto reporting requirements updated"],
-      "summary": ["New guidance on crypto compliance and reporting for firms"],
+      "news": ["Crypto reporting requirements updated", "Enhanced fraud reporting"],
+      "summary": [
+        "New guidance on crypto compliance and reporting for firms.",
+        "Improvements in detection and reporting of tax fraud and money laundering."
+      ],
       "priorities": ["Tax compliance", "AML supervision"],
       "importantDates": ["2025-12-15: New guidance on crypto"]
     },
     {
       "name": "FATF",
-      "news": ["Next MER scheduled"],
-      "summary": ["Global AML standards and UK evaluation"],
+      "news": ["Next MER scheduled", "Updated guidance on virtual assets"],
+      "summary": [
+        "Global AML standards and UK evaluation.",
+        "Recommendations on virtual assets and emerging financial crime risks."
+      ],
       "priorities": ["Global AML standards", "UK evaluation"],
       "importantDates": ["2027: UK Mutual Evaluation Review"]
     },
     {
       "name": "FCA",
-      "news": ["REP CRIM update guidance released"],
-      "summary": ["Supervision guidance for regulated firms and crypto oversight"],
-      "priorities": ["Supervision of authorized firms", "Crypto oversight"],
+      "news": ["REP CRIM update guidance released", "Payment firms AML compliance notice"],
+      "summary": [
+        "Supervision guidance for regulated firms and crypto oversight.",
+        "Expectations for AML, sanctions screening, and fraud controls in payment firms."
+      ],
+      "priorities": ["Supervision of authorized firms", "Crypto oversight", "AML for payment firms"],
       "importantDates": ["2025-12-10: Compliance check deadline"]
+    },
+    {
+      "name": "OFCOM",
+      "news": ["Regulatory update for telecoms AML compliance"],
+      "summary": ["Guidance on detecting fraud and financial crime in telecoms services."],
+      "priorities": ["Consumer protection", "AML in telecoms sector"],
+      "importantDates": ["2025-12-05: Public consultation deadline"]
+    },
+    {
+      "name": "Trading Standards",
+      "news": ["National crackdown on scams"],
+      "summary": ["New operations targeting consumer fraud and illicit financial schemes."],
+      "priorities": ["Consumer protection", "AML enforcement support"],
+      "importantDates": ["2025-11-28: Launch of anti-fraud campaign"]
+    },
+    {
+      "name": "National Trading Standards",
+      "news": ["Fraud intelligence update"],
+      "summary": ["Central hub providing intelligence and coordination for regional fraud investigations."],
+      "priorities": ["Coordination across local authorities", "AML and fraud prevention"],
+      "importantDates": ["2025-12-02: Intelligence briefing"]
+    },
+    {
+      "name": "DWP",
+      "news": ["Fraud prevention measures for benefits"],
+      "summary": ["New systems to detect fraudulent claims and money laundering risks in benefit payments."],
+      "priorities": ["AML and fraud detection in welfare system"],
+      "importantDates": ["2025-12-01: Launch of automated checks"]
     }
   ]
 }
