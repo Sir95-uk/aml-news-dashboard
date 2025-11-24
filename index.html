@@ -7,14 +7,14 @@
 <style>
   body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f9; color: #333; }
   h1 { text-align: center; color: #222; }
-  .agency { border-radius: 8px; margin: 10px 0; padding: 15px; color: #fff; transition: all 0.3s ease; }
-  .agency h2 { cursor: pointer; margin: 0; }
-  .content { display: none; margin-top: 10px; padding: 10px; border-radius: 5px; background: rgba(255,255,255,0.2); }
-  button { padding: 5px 10px; margin: 5px 0; cursor: pointer; border-radius: 4px; border: none; background: #3498db; color: #fff; }
+  .agency { border-radius: 8px; margin: 10px 0; padding: 15px; color: #fff; cursor: pointer; transition: all 0.3s ease; }
+  .agency h2 { margin: 0; }
+  .content { display: none; margin-top: 10px; padding: 10px; border-radius: 5px; background: rgba(255,255,255,0.1); color: #000; }
+  h3 { margin-top: 10px; }
+  .tag { display: inline-block; background: rgba(0,0,0,0.2); color: #fff; padding: 2px 6px; border-radius: 4px; margin-right: 5px; font-size: 0.9em; }
   table { width: 100%; border-collapse: collapse; margin-top: 20px; }
   th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
   th { background: #2980b9; color: #fff; }
-  .tag { display: inline-block; background: rgba(0,0,0,0.2); color: #fff; padding: 2px 6px; border-radius: 4px; margin-right: 5px; font-size: 0.9em; }
 </style>
 </head>
 <body>
@@ -38,7 +38,7 @@
 </table>
 
 <script>
-// JSON data
+// JSON data with colors
 const agenciesData = [
   { name:"HM Treasury", color:"#1abc9c", news:[{title:"New AML guidance","summary":"Updated AML rules for firms.","tags":["AML"]},{title:"Budget 2026","summary":"Budget focuses on AML compliance.","tags":["AML","Payment"]}], priorities:["Strengthening UK AML regime","Economic oversight and regulatory reform"], dates:[{date:"2025-12-01", title:"Consultation deadline","tags":["AML"]}] },
   { name:"Home Office", color:"#e67e22", news:[{title:"Immigration reform announced","summary":"Policy update related to border and AML investigations.","tags":["AML","Border"]}], priorities:["Border security","AML investigations support"], dates:[{date:"2025-11-30", title:"Policy release","tags":["AML"]}] },
@@ -51,19 +51,22 @@ const agenciesData = [
   { name:"DWP", color:"#2c3e50", news:[{title:"Benefit fraud guidance updated","summary":"Guidance for detecting benefit fraud.","tags":["Fraud","AML"]}], priorities:["Fraud prevention","Welfare compliance"], dates:[{date:"2025-12-20", title:"Guidance update","tags":["Fraud"]}] }
 ];
 
-// Function to render agencies
+// Render agencies
 function renderAgencies() {
   const container = document.getElementById("agencies");
   agenciesData.forEach(agency=>{
     const div = document.createElement("div");
     div.className = "agency";
-    div.style.background = agency.color;
+    div.style.backgroundColor = agency.color;
+
     const h2 = document.createElement("h2");
     h2.textContent = agency.name;
-    h2.onclick = () => content.style.display = content.style.display==="block"?"none":"block";
+    
     const content = document.createElement("div");
     content.className = "content";
-    
+
+    h2.onclick = ()=>content.style.display = content.style.display==="block"?"none":"block";
+
     // News
     const newsSection = document.createElement("div");
     newsSection.innerHTML = "<h3>News</h3>";
@@ -73,7 +76,7 @@ function renderAgencies() {
       newsSection.appendChild(p);
     });
     content.appendChild(newsSection);
-    
+
     // Priorities
     const prioritiesSection = document.createElement("div");
     prioritiesSection.innerHTML = "<h3>Priorities</h3>";
@@ -85,7 +88,7 @@ function renderAgencies() {
     });
     prioritiesSection.appendChild(ul);
     content.appendChild(prioritiesSection);
-    
+
     // Important Dates
     const datesSection = document.createElement("div");
     datesSection.innerHTML = "<h3>Important Dates</h3>";
@@ -102,7 +105,7 @@ function renderAgencies() {
   });
 }
 
-// Function to render diary
+// Render diary
 function renderDiary() {
   const tbody = document.querySelector("#diary tbody");
   agenciesData.forEach(agency=>{
@@ -114,7 +117,6 @@ function renderDiary() {
   });
 }
 
-// Run functions
 renderAgencies();
 renderDiary();
 </script>
