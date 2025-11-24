@@ -7,14 +7,14 @@
 <style>
   body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f9; color: #333; }
   h1 { text-align: center; color: #222; }
-  .agency { background: #fff; border-radius: 8px; margin: 10px 0; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-  .agency h2 { cursor: pointer; margin: 0; color: #000; }
-  .content { display: none; margin-top: 10px; }
+  .agency { border-radius: 8px; margin: 10px 0; padding: 15px; color: #fff; transition: all 0.3s ease; }
+  .agency h2 { cursor: pointer; margin: 0; }
+  .content { display: none; margin-top: 10px; padding: 10px; border-radius: 5px; background: rgba(255,255,255,0.2); }
   button { padding: 5px 10px; margin: 5px 0; cursor: pointer; border-radius: 4px; border: none; background: #3498db; color: #fff; }
   table { width: 100%; border-collapse: collapse; margin-top: 20px; }
   th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
   th { background: #2980b9; color: #fff; }
-  .tag { display: inline-block; background: #f39c12; color: #fff; padding: 2px 6px; border-radius: 4px; margin-right: 5px; font-size: 0.9em; }
+  .tag { display: inline-block; background: rgba(0,0,0,0.2); color: #fff; padding: 2px 6px; border-radius: 4px; margin-right: 5px; font-size: 0.9em; }
 </style>
 </head>
 <body>
@@ -40,15 +40,15 @@
 <script>
 // JSON data
 const agenciesData = [
-  { name:"HM Treasury", news:[{title:"New AML guidance","summary":"Updated AML rules for firms.","tags":["AML"]},{title:"Budget 2026","summary":"Budget focuses on AML compliance.","tags":["AML","Payment"]}], priorities:["Strengthening UK AML regime","Economic oversight and regulatory reform"], dates:[{date:"2025-12-01", title:"Consultation deadline","tags":["AML"]}] },
-  { name:"Home Office", news:[{title:"Immigration reform announced","summary":"Policy update related to border and AML investigations.","tags":["AML","Border"]}], priorities:["Border security","AML investigations support"], dates:[{date:"2025-11-30", title:"Policy release","tags":["AML"]}] },
-  { name:"HMRC", news:[{title:"Crypto reporting requirements updated","summary":"Guidance on crypto compliance for tax.","tags":["AML","Crypto"]}], priorities:["Tax compliance","AML supervision"], dates:[{date:"2025-12-15", title:"Crypto guidance","tags":["AML","Crypto"]}] },
-  { name:"FATF", news:[{title:"Next MER scheduled","summary":"Next UK Mutual Evaluation Review in 2027.","tags":["AML","FATF"]}], priorities:["Global AML standards","UK evaluation"], dates:[{date:"2027-01-01", title:"Next MER","tags":["AML","FATF"]}] },
-  { name:"FCA", news:[{title:"REP CRIM guidance released","summary":"Supervision guidance for firms.","tags":["AML","FCA"]}], priorities:["Supervision of authorized firms","Crypto oversight"], dates:[{date:"2025-12-10", title:"Compliance check deadline","tags":["AML","FCA"]}] },
-  { name:"OFCOM", news:[{title:"Consumer protection update","summary":"New rules for telecom firms.","tags":["Consumer","Regulatory"]}], priorities:["Consumer protection","Regulatory oversight"], dates:[{date:"2025-12-05", title:"Telecom compliance review","tags":["Consumer"]}] },
-  { name:"Trading Standards", news:[{title:"Fraud alert issued","summary":"Latest scams reported for public awareness.","tags":["Fraud","Consumer"]}], priorities:["Fraud prevention","Consumer protection"], dates:[{date:"2025-12-08", title:"Fraud alert","tags":["Fraud"]}] },
-  { name:"National Trading Standards", news:[{title:"National scam report published","summary":"Summary of major scams nationally.","tags":["Fraud","AML"]}], priorities:["National fraud monitoring","AML compliance"], dates:[{date:"2025-12-12", title:"Scam report","tags":["Fraud","AML"]}] },
-  { name:"DWP", news:[{title:"Benefit fraud guidance updated","summary":"Guidance for detecting benefit fraud.","tags":["Fraud","AML"]}], priorities:["Fraud prevention","Welfare compliance"], dates:[{date:"2025-12-20", title:"Guidance update","tags":["Fraud"]}] }
+  { name:"HM Treasury", color:"#1abc9c", news:[{title:"New AML guidance","summary":"Updated AML rules for firms.","tags":["AML"]},{title:"Budget 2026","summary":"Budget focuses on AML compliance.","tags":["AML","Payment"]}], priorities:["Strengthening UK AML regime","Economic oversight and regulatory reform"], dates:[{date:"2025-12-01", title:"Consultation deadline","tags":["AML"]}] },
+  { name:"Home Office", color:"#e67e22", news:[{title:"Immigration reform announced","summary":"Policy update related to border and AML investigations.","tags":["AML","Border"]}], priorities:["Border security","AML investigations support"], dates:[{date:"2025-11-30", title:"Policy release","tags":["AML"]}] },
+  { name:"HMRC", color:"#3498db", news:[{title:"Crypto reporting requirements updated","summary":"Guidance on crypto compliance for tax.","tags":["AML","Crypto"]}], priorities:["Tax compliance","AML supervision"], dates:[{date:"2025-12-15", title:"Crypto guidance","tags":["AML","Crypto"]}] },
+  { name:"FATF", color:"#9b59b6", news:[{title:"Next MER scheduled","summary":"Next UK Mutual Evaluation Review in 2027.","tags":["AML","FATF"]}], priorities:["Global AML standards","UK evaluation"], dates:[{date:"2027-01-01", title:"Next MER","tags":["AML","FATF"]}] },
+  { name:"FCA", color:"#e74c3c", news:[{title:"REP CRIM guidance released","summary":"Supervision guidance for firms.","tags":["AML","FCA"]}], priorities:["Supervision of authorized firms","Crypto oversight"], dates:[{date:"2025-12-10", title:"Compliance check deadline","tags":["AML","FCA"]}] },
+  { name:"OFCOM", color:"#f1c40f", news:[{title:"Consumer protection update","summary":"New rules for telecom firms.","tags":["Consumer","Regulatory"]}], priorities:["Consumer protection","Regulatory oversight"], dates:[{date:"2025-12-05", title:"Telecom compliance review","tags":["Consumer"]}] },
+  { name:"Trading Standards", color:"#16a085", news:[{title:"Fraud alert issued","summary":"Latest scams reported for public awareness.","tags":["Fraud","Consumer"]}], priorities:["Fraud prevention","Consumer protection"], dates:[{date:"2025-12-08", title:"Fraud alert","tags":["Fraud"]}] },
+  { name:"National Trading Standards", color:"#c0392b", news:[{title:"National scam report published","summary":"Summary of major scams nationally.","tags":["Fraud","AML"]}], priorities:["National fraud monitoring","AML compliance"], dates:[{date:"2025-12-12", title:"Scam report","tags":["Fraud","AML"]}] },
+  { name:"DWP", color:"#2c3e50", news:[{title:"Benefit fraud guidance updated","summary":"Guidance for detecting benefit fraud.","tags":["Fraud","AML"]}], priorities:["Fraud prevention","Welfare compliance"], dates:[{date:"2025-12-20", title:"Guidance update","tags":["Fraud"]}] }
 ];
 
 // Function to render agencies
@@ -57,6 +57,7 @@ function renderAgencies() {
   agenciesData.forEach(agency=>{
     const div = document.createElement("div");
     div.className = "agency";
+    div.style.background = agency.color;
     const h2 = document.createElement("h2");
     h2.textContent = agency.name;
     h2.onclick = () => content.style.display = content.style.display==="block"?"none":"block";
