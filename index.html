@@ -4,151 +4,98 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AML & Regulatory Dashboard</title>
-<link rel="stylesheet" href="style.css">
+<style>
+body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; }
+h1 { color: #2c3e50; }
+.section { margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; background: #fff; }
+.section button { width: 100%; text-align: left; padding: 10px; background: #2c3e50; color: #fff; border: none; cursor: pointer; font-size: 16px; border-radius: 5px 5px 0 0; }
+.section button:hover { background: #34495e; }
+.content { display: none; padding: 10px 15px; }
+.content h3 { margin-top: 0; color: #2c3e50; }
+ul { margin-top: 5px; }
+</style>
 </head>
 <body>
+
 <h1>AML & Regulatory Dashboard</h1>
-<p>Auto-loaded from agencies.json — shows summaries, tags and dates.</p>
-<p id="merCountdown">Loading MER countdown…</p>
-
-<input type="text" id="searchBox" placeholder="Search title, summary, tags..." />
-
-<select id="agencyFilter">
-  <option value="">All agencies</option>
-</select>
-
+<p>Auto-loaded from <code>agencies.json</code> — shows news, summaries, priorities, and dates.</p>
 <div id="dashboard"></div>
 
-<h2>Upcoming Dates</h2>
-<div id="upcomingDates"></div>
-
-<script src="script.js"></script>
-</body>
-</html>
-  <div style="margin-left:auto" class="muted">Last update: <span id="lastUpdate">--</span></div>
-</div>
-
-<div class="grid">
-  <main class="card" id="main">
-    <div id="results"></div>
-  </main>
-
-  <aside>
-    <div class="card">
-      <div style="font-weight:700">Agencies</div>
-      <div id="agencyList" style="margin-top:8px"></div>
-    </div>
-
-    <div class="card" style="margin-top:12px">
-      <div style="font-weight:700">Upcoming dates</div>
-      <div id="dates" style="margin-top:8px"></div>
-    </div>
-  </aside>
-</div>
-
 <script>
-/* Utility */
-function isNew(iso){ if(!iso) return false; const d=new Date(iso); const h=(Date.now()-d.getTime())/(1000*60*60); return h<=48; }
-function fmt(iso){ if(!iso) return ''; return new Date(iso).toLocaleString(); }
-function escapeHtml(s){ if(!s) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+// Load JSON from GitHub
+const agenciesURL = 'https://raw.githubusercontent.com/Sir95-uk/aml-news-dashboard/main/agencies.json';
 
-/* Load JSON */
-async function load(){
-  try{
-    const r = await fetch('agencies.json',{cache:'no-store'});
-    if(!r.ok) throw new Error('agencies.json not found');
-    const data = await r.json();
-    document.getElementById('lastUpdate').textContent = data.lastUpdated ? new Date(data.lastUpdated).toLocaleString() : 'unknown';
-    window.__AG = data;
-    populateFilters(data);
-    renderAll(data);
-    renderDates(data);
-    renderMER();
-  }catch(e){
-    document.getElementById('results').innerHTML = '<div class="muted">Error loading agencies.json — check file name & structure in repo.</div>';
-    console.error(e);
-  }
-}
+fetch(agenciesURL)
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById('dashboard');
 
-/* Filters */
-function populateFilters(data){
-  const sel = document.getElementById('agencyFilter');
-  sel.innerHTML = '<option value="all">All agencies</option>';
-  data.agencies.forEach(a=>{
-    const opt = document.createElement('option'); opt.value = a.name; opt.textContent = a.name; sel.appendChild(opt);
+    data.agencies.forEach(agency => {
+      const section = document.createElement('div');
+      section.className = 'section';
+
+      const btn = document.createElement('button');
+      btn.textContent = agency.name;
+      btn.onclick = () => {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+      };
+
+      const content = document.createElement('div');
+      content.className = 'content';
+
+      const newsH3 = document.createElement('h3');
+      newsH3.textContent = 'News';
+      content.appendChild(newsH3);
+      const newsUl = document.createElement('ul');
+      agency.news.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        newsUl.appendChild(li);
+      });
+      content.appendChild(newsUl);
+
+      const summaryH3 = document.createElement('h3');
+      summaryH3.textContent = 'Summary';
+      content.appendChild(summaryH3);
+      const summaryUl = document.createElement('ul');
+      agency.summary.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        summaryUl.appendChild(li);
+      });
+      content.appendChild(summaryUl);
+
+      const prioritiesH3 = document.createElement('h3');
+      prioritiesH3.textContent = 'Priorities';
+      content.appendChild(prioritiesH3);
+      const prioritiesUl = document.createElement('ul');
+      agency.priorities.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        prioritiesUl.appendChild(li);
+      });
+      content.appendChild(prioritiesUl);
+
+      const datesH3 = document.createElement('h3');
+      datesH3.textContent = 'Important Dates';
+      content.appendChild(datesH3);
+      const datesUl = document.createElement('ul');
+      agency.importantDates.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        datesUl.appendChild(li);
+      });
+      content.appendChild(datesUl);
+
+      section.appendChild(btn);
+      section.appendChild(content);
+      container.appendChild(section);
+    });
+  })
+  .catch(err => {
+    document.getElementById('dashboard').innerHTML = `<p style="color:red;">Error loading agencies.json — check file name & structure in repo.</p>`;
+    console.error(err);
   });
-  // agency list in aside
-  const list = document.getElementById('agencyList'); list.innerHTML = '';
-  data.agencies.forEach(a=>{
-    const btn = document.createElement('button'); btn.textContent = a.name; btn.className='agency-btn'; btn.style.marginTop='6px'; btn.style.width='100%';
-    btn.onclick = ()=>{ document.getElementById('agencyFilter').value = a.name; applyFilters(); };
-    list.appendChild(btn);
-  });
-}
-
-/* Render */
-function renderAll(data){
-  const container = document.getElementById('results');
-  container.innerHTML = '';
-  // Build flat items list with agency pointer
-  const items = [];
-  data.agencies.forEach(a=>{
-    (a.news||[]).forEach(n=> items.push(Object.assign({}, n, {agency: a.name})));
-  });
-  window.__ITEMS = items;
-  applyFilters();
-}
-
-function applyFilters(){
-  const q = document.getElementById('search').value.trim().toLowerCase();
-  const agency = document.getElementById('agencyFilter').value;
-  let items = window.__ITEMS || [];
-  if(agency && agency!=='all') items = items.filter(i=>i.agency===agency);
-  if(q) items = items.filter(i => (i.title + ' ' + (i.summary||'') + ' ' + (i.tags||[]).join(' ')).toLowerCase().includes(q));
-  // sort by date desc
-  items.sort((a,b)=> (b.date||'').localeCompare(a.date||''));
-  const out = document.getElementById('results');
-  out.innerHTML = '';
-  if(items.length===0){ out.innerHTML = '<div class="muted">No items match filters.</div>'; return; }
-  items.forEach(it=>{
-    const div = document.createElement('div'); div.className='item';
-    const newBadge = isNew(it.date) ? '<span class="badge">NEW</span>' : '';
-    const tagsHtml = (it.tags||[]).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join(' ');
-    div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><a href="${it.link}" target="_blank" style="font-weight:700;color:var(--accent)">${escapeHtml(it.title)}</a> ${newBadge}<div class="muted" style="margin-top:6px">${escapeHtml(it.agency)} • ${fmt(it.date)}</div></div><div>${tagsHtml}</div></div>
-      <div style="margin-top:8px" class="muted">${escapeHtml(it.summary)}</div>`;
-    out.appendChild(div);
-  });
-}
-
-/* Upcoming dates */
-function renderDates(data){
-  const box = document.getElementById('dates'); box.innerHTML = '';
-  const rows = [];
-  data.agencies.forEach(a=>{
-    (a.importantDates||[]).forEach(d=> rows.push({agency:a.name,date:d}));
-  });
-  if(rows.length===0){ box.innerHTML = '<div class="muted">No dates found.</div>'; return; }
-  rows.forEach(r=>{
-    const p = document.createElement('div'); p.style.marginBottom='8px';
-    p.innerHTML = `<strong>${escapeHtml(r.agency)}</strong> <div class="muted">${escapeHtml(r.date)}</div>`;
-    box.appendChild(p);
-  });
-}
-
-/* MER countdown */
-function renderMER(){
-  const merEl = document.getElementById('mer');
-  const target = new Date('2027-01-01T00:00:00Z');
-  const days = Math.max(0, Math.floor((target - new Date())/(1000*60*60*24)));
-  merEl.textContent = `⏳ FATF MER 2027 in ${days} days`;
-}
-
-/* Events */
-document.getElementById('search').addEventListener('input', ()=>applyFilters());
-document.getElementById('agencyFilter').addEventListener('change', ()=>applyFilters());
-function clearFilters(){ document.getElementById('search').value=''; document.getElementById('agencyFilter').value='all'; applyFilters(); }
-
-load();
 </script>
 </body>
 </html>
