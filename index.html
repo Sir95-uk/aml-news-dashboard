@@ -1,248 +1,163 @@
-{
-  "lastUpdated": "2025-11-24T09:00:00Z",
-  "agencies": [
-    {
-      "name": "HM Treasury",
-      "news": [
-        {
-          "title": "HMT publishes new AML guidance for regulated firms",
-          "date": "2025-11-21T09:00:00Z",
-          "link": "https://www.gov.uk/government/news/hmt-publishes-aml-guidance",
-          "summary": "Guidance focuses on enhanced due diligence, improved SAR quality and expectations for beneficial ownership checks.",
-          "tags": ["AML","Policy","Beneficial Ownership"]
-        },
-        {
-          "title": "Budget 2026 preview includes economic crime funding",
-          "date": "2025-11-10T08:00:00Z",
-          "link": "https://www.gov.uk/government/speeches/budget-2026-preview",
-          "summary": "Announces increased funding for asset recovery and law enforcement AML capabilities.",
-          "tags": ["Budget","Asset Recovery","Enforcement"]
-        }
-      ],
-      "priorities": [
-        "Strengthening the UK AML/CTF framework",
-        "Improving beneficial ownership transparency",
-        "Resourcing asset recovery"
-      ],
-      "importantDates": [
-        "2025-12-01: Consultation deadline on AML reforms"
-      ]
-    },
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AML & Regulatory Dashboard</title>
+<style>
+  :root{--bg:#f6f8fb;--card:#fff;--accent:#003e8a;--muted:#6b7280}
+  body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);margin:0;padding:20px;color:#111}
+  header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  h1{margin:0;color:var(--accent)}
+  .controls{margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  input[type="search"], select{padding:8px;border-radius:8px;border:1px solid #d1d5db}
+  .grid{display:grid;grid-template-columns:1fr 340px;gap:16px;margin-top:18px}
+  .card{background:var(--card);padding:12px;border-radius:10px;box-shadow:0 6px 18px rgba(16,24,40,0.06)}
+  .item{padding:10px;border-radius:8px;border-left:4px solid #eef2ff;margin-bottom:10px;background:#fff}
+  .muted{color:var(--muted);font-size:13px}
+  .badge{display:inline-block;background:#ffeaaf;color:#6b3c00;padding:4px 8px;border-radius:999px;margin-left:8px;font-weight:700;font-size:12px}
+  .tag{display:inline-block;border-radius:6px;padding:4px 8px;margin-right:6px;background:#eef6ff;color:#0b3b66;font-size:12px}
+  details summary{cursor:pointer;padding:10px;border-radius:8px;background:#f8fafc;border:1px solid #e6eefb}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>AML & Regulatory Dashboard</h1>
+    <div class="muted">Auto-loaded from <code>agencies.json</code> — shows summaries, tags and dates.</div>
+  </div>
+  <div id="mer" class="card muted">Loading MER countdown…</div>
+</header>
 
-    {
-      "name": "Home Office",
-      "news": [
-        {
-          "title": "Home Office updates identity verification guidance",
-          "date": "2025-11-20T10:00:00Z",
-          "link": "https://www.gov.uk/government/news/home-office-identity-guidance",
-          "summary": "Changes seek to reduce identity fraud and improve cross-border checks, facilitating AML investigations.",
-          "tags": ["Identity","Fraud","AML"]
-        }
-      ],
-      "priorities": [
-        "Border identity security",
-        "Support to AML and sanctions investigations"
-      ],
-      "importantDates": [
-        "2025-11-30: Policy release on identity verification"
-      ]
-    },
+<div class="controls">
+  <input id="search" type="search" placeholder="Search title, summary, tags..." style="width:420px" />
+  <select id="agencyFilter"><option value="all">All agencies</option></select>
+  <button id="clear" onclick="clearFilters()">Clear</button>
+  <div style="margin-left:auto" class="muted">Last update: <span id="lastUpdate">--</span></div>
+</div>
 
-    {
-      "name": "HMRC",
-      "news": [
-        {
-          "title": "HMRC clarifies crypto reporting and record-keeping expectations",
-          "date": "2025-11-22T12:00:00Z",
-          "link": "https://www.gov.uk/government/news/hmrc-crypto-reporting",
-          "summary": "HMRC sets out record-keeping, tax and suspicious activity reporting expectations for crypto-adjacent businesses.",
-          "tags": ["Crypto","Tax","AML"]
-        },
-        {
-          "title": "HMRC launches compliance campaign targeting high-risk sectors",
-          "date": "2025-10-30T09:30:00Z",
-          "link": "https://www.gov.uk/government/news/hmrc-compliance-campaign",
-          "summary": "Campaign includes outreach to MSBs and trust/company service providers (TCSPs) with targeted inspections.",
-          "tags": ["Compliance","TCSP","MSB"]
-        }
-      ],
-      "priorities": [
-        "AML supervision of MSBs & TCSPs",
-        "Improving SAR submissions from tax-related firms"
-      ],
-      "importantDates": [
-        "2025-12-15: New crypto tax guidance effective date"
-      ]
-    },
+<div class="grid">
+  <main class="card" id="main">
+    <div id="results"></div>
+  </main>
 
-    {
-      "name": "FCA – Payment Firms",
-      "news": [
-        {
-          "title": "FCA issues expectations for safeguarding customer funds",
-          "date": "2025-11-05T11:00:00Z",
-          "link": "https://www.fca.org.uk/news/fca-safeguarding-expectations",
-          "summary": "FCA outlines strengthened controls for payment firms including reconciliation, segregation and monitoring requirements.",
-          "tags": ["FCA","Payments","Safeguarding","AML"]
-        },
-        {
-          "title": "FCA enforcement action against payment firm for weak financial crime controls",
-          "date": "2025-09-18T09:00:00Z",
-          "link": "https://www.fca.org.uk/news/fca-enforcement-payments",
-          "summary": "Public enforcement highlighting failure to implement adequate AML systems; fine and remediation ordered.",
-          "tags": ["Enforcement","Payments","AML"]
-        }
-      ],
-      "priorities": [
-        "Payment firm supervision (safeguarding & AML)",
-        "Protecting customers from fraud"
-      ],
-      "importantDates": [
-        "2025-12-10: Payment safeguarding attestation deadline"
-      ]
-    },
+  <aside>
+    <div class="card">
+      <div style="font-weight:700">Agencies</div>
+      <div id="agencyList" style="margin-top:8px"></div>
+    </div>
 
-    {
-      "name": "FCA – Crypto",
-      "news": [
-        {
-          "title": "FCA updates Travel Rule guidance for VASPs",
-          "date": "2025-10-01T08:00:00Z",
-          "link": "https://www.fca.org.uk/publication/crypto/travel-rule-guidance.pdf",
-          "summary": "Firms must capture and transfer originator/beneficiary info for virtual asset transfers; compliance timelines clarified.",
-          "tags": ["FCA","Crypto","Travel Rule","VASP"]
-        },
-        {
-          "title": "FCA warns consumers about unregistered crypto firms",
-          "date": "2025-07-22T14:00:00Z",
-          "link": "https://www.fca.org.uk/news/fca-warns-unregistered-crypto-firms",
-          "summary": "Consumer alert emphasises risks and lists how to check registration.",
-          "tags": ["Consumer Warning","Crypto"]
-        }
-      ],
-      "priorities": [
-        "Supervision of registered crypto firms",
-        "Travel Rule enforcement",
-        "Consumer protection"
-      ],
-      "importantDates": [
-        "2026-01-05: Travel Rule compliance assessment"
-      ]
-    },
+    <div class="card" style="margin-top:12px">
+      <div style="font-weight:700">Upcoming dates</div>
+      <div id="dates" style="margin-top:8px"></div>
+    </div>
+  </aside>
+</div>
 
-    {
-      "name": "OFCOM",
-      "news": [
-        {
-          "title": "Ofcom introduces anti-scam telecom measures",
-          "date": "2025-11-02T09:00:00Z",
-          "link": "https://www.ofcom.org.uk/news-centre/2025/telecom-anti-scam",
-          "summary": "New rules require telcos to implement caller ID and anti-scam detection to reduce telecoms fraud.",
-          "tags": ["OFCOM","Fraud","Telecoms"]
-        }
-      ],
-      "priorities": [
-        "Telecoms fraud prevention",
-        "Online safety enforcement"
-      ],
-      "importantDates": [
-        "2026-03-01: Telecom fraud rules compliance deadline"
-      ]
-    },
+<script>
+/* Utility */
+function isNew(iso){ if(!iso) return false; const d=new Date(iso); const h=(Date.now()-d.getTime())/(1000*60*60); return h<=48; }
+function fmt(iso){ if(!iso) return ''; return new Date(iso).toLocaleString(); }
+function escapeHtml(s){ if(!s) return ''; return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
 
-    {
-      "name": "Trading Standards",
-      "news": [
-        {
-          "title": "Trading Standards warns of emerging consumer credit scam",
-          "date": "2025-10-25T10:30:00Z",
-          "link": "https://www.tradingstandards.uk/news/emerging-credit-scam",
-          "summary": "Regional Trading Standards report increased doorstep and online credit scams targeting older people.",
-          "tags": ["Trading Standards","Fraud","Consumer Protection"]
-        }
-      ],
-      "priorities": [
-        "Consumer protection",
-        "Countering fraud in local markets"
-      ],
-      "importantDates": [
-        "2025-12-12: National Consumer Awareness Week"
-      ]
-    },
-
-    {
-      "name": "National Trading Standards",
-      "news": [
-        {
-          "title": "NTS launches operation against organised doorstep fraud networks",
-          "date": "2025-11-15T09:00:00Z",
-          "link": "https://www.nationaltradingstandards.uk/news/operation-doorstep",
-          "summary": "Multi-force operation targets organised networks responsible for large-scale doorstep fraud and money laundering.",
-          "tags": ["NTS","Organised Crime","Fraud","Money Laundering"]
-        },
-        {
-          "title": "Intelligence brief: money laundering risks in illicit trading",
-          "date": "2025-08-12T12:00:00Z",
-          "link": "https://www.nationaltradingstandards.uk/reports/money-laundering-risk",
-          "summary": "Report describes typologies, vulnerabilities and recommended local authority responses.",
-          "tags": ["NTS","AML","Typologies"]
-        }
-      ],
-      "priorities": [
-        "Cross-regional fraud enforcement",
-        "Disruption of criminal networks"
-      ],
-      "importantDates": [
-        "2025-12-20: National scam awareness report publication"
-      ]
-    },
-
-    {
-      "name": "FATF",
-      "news": [
-        {
-          "title": "FATF publishes virtual assets guidance update",
-          "date": "2025-09-01T08:00:00Z",
-          "link": "https://www.fatf-gafi.org/publications/virtual-assets",
-          "summary": "Guidance on virtual assets supervision and travel rule implementation.",
-          "tags": ["FATF","Crypto","Guidance"]
-        }
-      ],
-      "priorities": [
-        "Global AML/CFT standards",
-        "Mutual Evaluation Reviews (MERs)"
-      ],
-      "importantDates": [
-        "2027: UK Mutual Evaluation Review (MER)"
-      ]
-    },
-
-    {
-      "name": "AML & Fraud Updates (NCA / UKFIU)",
-      "news": [
-        {
-          "title": "NCA highlights rise in complex fraud and crypto-enabled laundering",
-          "date": "2025-11-01T11:00:00Z",
-          "link": "https://www.nationalcrimeagency.gov.uk/news/crypto-laundering-rise",
-          "summary": "NCA warns about cross-border organised crime using crypto for layering and cross-border movement of funds.",
-          "tags": ["NCA","Fraud","Crypto","AML"]
-        },
-        {
-          "title": "UKFIU releases SAR quality review",
-          "date": "2025-10-10T09:00:00Z",
-          "link": "https://www.gov.uk/government/publications/ukfiu-sar-review",
-          "summary": "Report highlights common SAR deficiencies and sets out improvements required by reporting firms.",
-          "tags": ["UKFIU","SAR","Quality"]
-        }
-      ],
-      "priorities": [
-        "Improving SAR quality",
-        "Targeting organised laundering networks"
-      ],
-      "importantDates": [
-        "2026-02-01: UKFIU SARs annual review"
-      ]
-    }
-  ]
+/* Load JSON */
+async function load(){
+  try{
+    const r = await fetch('agencies.json',{cache:'no-store'});
+    if(!r.ok) throw new Error('agencies.json not found');
+    const data = await r.json();
+    document.getElementById('lastUpdate').textContent = data.lastUpdated ? new Date(data.lastUpdated).toLocaleString() : 'unknown';
+    window.__AG = data;
+    populateFilters(data);
+    renderAll(data);
+    renderDates(data);
+    renderMER();
+  }catch(e){
+    document.getElementById('results').innerHTML = '<div class="muted">Error loading agencies.json — check file name & structure in repo.</div>';
+    console.error(e);
+  }
 }
+
+/* Filters */
+function populateFilters(data){
+  const sel = document.getElementById('agencyFilter');
+  sel.innerHTML = '<option value="all">All agencies</option>';
+  data.agencies.forEach(a=>{
+    const opt = document.createElement('option'); opt.value = a.name; opt.textContent = a.name; sel.appendChild(opt);
+  });
+  // agency list in aside
+  const list = document.getElementById('agencyList'); list.innerHTML = '';
+  data.agencies.forEach(a=>{
+    const btn = document.createElement('button'); btn.textContent = a.name; btn.className='agency-btn'; btn.style.marginTop='6px'; btn.style.width='100%';
+    btn.onclick = ()=>{ document.getElementById('agencyFilter').value = a.name; applyFilters(); };
+    list.appendChild(btn);
+  });
+}
+
+/* Render */
+function renderAll(data){
+  const container = document.getElementById('results');
+  container.innerHTML = '';
+  // Build flat items list with agency pointer
+  const items = [];
+  data.agencies.forEach(a=>{
+    (a.news||[]).forEach(n=> items.push(Object.assign({}, n, {agency: a.name})));
+  });
+  window.__ITEMS = items;
+  applyFilters();
+}
+
+function applyFilters(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const agency = document.getElementById('agencyFilter').value;
+  let items = window.__ITEMS || [];
+  if(agency && agency!=='all') items = items.filter(i=>i.agency===agency);
+  if(q) items = items.filter(i => (i.title + ' ' + (i.summary||'') + ' ' + (i.tags||[]).join(' ')).toLowerCase().includes(q));
+  // sort by date desc
+  items.sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+  const out = document.getElementById('results');
+  out.innerHTML = '';
+  if(items.length===0){ out.innerHTML = '<div class="muted">No items match filters.</div>'; return; }
+  items.forEach(it=>{
+    const div = document.createElement('div'); div.className='item';
+    const newBadge = isNew(it.date) ? '<span class="badge">NEW</span>' : '';
+    const tagsHtml = (it.tags||[]).map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join(' ');
+    div.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><a href="${it.link}" target="_blank" style="font-weight:700;color:var(--accent)">${escapeHtml(it.title)}</a> ${newBadge}<div class="muted" style="margin-top:6px">${escapeHtml(it.agency)} • ${fmt(it.date)}</div></div><div>${tagsHtml}</div></div>
+      <div style="margin-top:8px" class="muted">${escapeHtml(it.summary)}</div>`;
+    out.appendChild(div);
+  });
+}
+
+/* Upcoming dates */
+function renderDates(data){
+  const box = document.getElementById('dates'); box.innerHTML = '';
+  const rows = [];
+  data.agencies.forEach(a=>{
+    (a.importantDates||[]).forEach(d=> rows.push({agency:a.name,date:d}));
+  });
+  if(rows.length===0){ box.innerHTML = '<div class="muted">No dates found.</div>'; return; }
+  rows.forEach(r=>{
+    const p = document.createElement('div'); p.style.marginBottom='8px';
+    p.innerHTML = `<strong>${escapeHtml(r.agency)}</strong> <div class="muted">${escapeHtml(r.date)}</div>`;
+    box.appendChild(p);
+  });
+}
+
+/* MER countdown */
+function renderMER(){
+  const merEl = document.getElementById('mer');
+  const target = new Date('2027-01-01T00:00:00Z');
+  const days = Math.max(0, Math.floor((target - new Date())/(1000*60*60*24)));
+  merEl.textContent = `⏳ FATF MER 2027 in ${days} days`;
+}
+
+/* Events */
+document.getElementById('search').addEventListener('input', ()=>applyFilters());
+document.getElementById('agencyFilter').addEventListener('change', ()=>applyFilters());
+function clearFilters(){ document.getElementById('search').value=''; document.getElementById('agencyFilter').value='all'; applyFilters(); }
+
+load();
+</script>
+</body>
+</html>
