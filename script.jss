@@ -17,7 +17,10 @@ async function loadDashboard() {
       // Create section
       const sec = document.createElement('section');
       const btn = document.createElement('button');
-      btn.textContent = agency.name;
+btn.style.color = "#000"; // black text for visibility;
+btn.style.fontWeight = "bold";
+btn.style.fontSize = "16px";
+
       btn.onclick = () => content.style.display = content.style.display === 'block' ? 'none' : 'block';
 
       const content = document.createElement('div');
