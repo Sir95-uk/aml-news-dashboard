@@ -1,0 +1,35 @@
+{
+  "lastUpdated": "2025-11-24",
+  "agencies": [
+    {
+      "name": "HM Treasury",
+      "news": ["New AML guidance published", "Budget announcement 2026"],
+      "priorities": ["Strengthening UK AML regime", "Economic oversight"],
+      "importantDates": ["2025-12-01: Public consultation deadline"]
+    },
+    {
+      "name": "Home Office",
+      "news": ["Immigration reform announced"],
+      "priorities": ["Border security", "AML investigations support"],
+      "importantDates": ["2025-11-30: Policy update release"]
+    },
+    {
+      "name": "HMRC",
+      "news": ["Crypto reporting requirements updated"],
+      "priorities": ["Tax compliance", "AML supervision"],
+      "importantDates": ["2025-12-15: New guidance on crypto"]
+    },
+    {
+      "name": "FATF",
+      "news": ["Next MER scheduled"],
+      "priorities": ["Global AML standards", "UK evaluation"],
+      "importantDates": ["2027: UK Mutual Evaluation Review"]
+    },
+    {
+      "name": "FCA",
+      "news": ["REP CRIM update guidance released"],
+      "priorities": ["Supervision of authorized firms", "Crypto oversight"],
+      "importantDates": ["2025-12-10: Compliance check deadline"]
+    }
+  ]
+}
