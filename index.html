@@ -5,37 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AML & Regulatory Dashboard</title>
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #f5f7fa; }
-  h1 { color: #1f2a38; text-align: center; }
-  h2 { color: #1f2a38; margin-top: 30px; }
-  .section { margin-bottom: 20px; border-radius: 8px; overflow: hidden; transition: all 0.3s ease; }
-  button { width: 100%; text-align: left; padding: 12px 15px; font-size: 16px; cursor: pointer; border: none; outline: none; color: #1f2a38; font-weight: bold; }
-  button.hm-treasury { background: #ffe0e0; }
-  button.home-office { background: #e0f7ff; }
-  button.hmrc { background: #e0ffe0; }
-  button.fatf { background: #fffbe0; }
-  button.fca { background: #f0e0ff; }
-  button.ofcom { background: #ffe0f0; }
-  button.trading-standards { background: #e0fff7; }
-  button.national-trading-standards { background: #fff0e0; }
-  button.dwp { background: #e0e0ff; }
-  .content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.4s ease; padding: 0 15px; opacity: 0; background: #fff; }
-  .content.open { opacity: 1; padding: 10px 15px; }
-  p, li { margin: 5px 0; }
-  a { color: #1f2a38; text-decoration: underline; }
-  table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-  tr:hover { background-color: #f0f0f0; }
+  body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }
+  h1 { text-align: center; color: #222; }
+  .agency-section { border-radius: 8px; margin-bottom: 15px; padding: 15px; cursor: pointer; transition: all 0.3s ease; }
+  .agency-section h2 { margin: 0; color: #000; }
+  .agency-section.collapsed { background: #e0e0e0; }
+  .agency-section.expanded { background: #fff; box-shadow: 0px 4px 8px rgba(0,0,0,0.1); }
+  .content { display: none; margin-top: 10px; }
+  .news-item { margin-bottom: 10px; }
+  .news-item a { color: #007BFF; text-decoration: none; font-weight: bold; }
+  .news-item a:hover { text-decoration: underline; }
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  table, th, td { border: 1px solid #ccc; }
+  th, td { padding: 8px; text-align: left; }
+  th { background: #007BFF; color: #fff; }
 </style>
 </head>
 <body>
+
 <h1>AML & Regulatory Dashboard</h1>
-<p>Auto-loaded — shows news, summaries, priorities, and dates. Expand sections to view details.</p>
+<p>Click on each agency to expand news, priorities, and important dates.</p>
 
 <div id="dashboard"></div>
 
 <h2>Diary of Important Dates</h2>
-<table id="diaryTable">
+<table id="diary">
   <thead>
     <tr>
       <th>Date</th>
@@ -48,123 +42,150 @@
 </table>
 
 <script>
+// Agencies data
 const agenciesData = [
   {
     name: "HM Treasury",
-    subtitle: "Crossover with FCA: Financial regulations & AML compliance",
     news: [
-      { title: "New AML guidance", summary: "Updated AML rules for firms.", tags: ["AML"], link:"https://www.gov.uk/government/publications/anti-money-laundering-guidance" },
-      { title: "Budget 2026", summary: "Budget focuses on AML compliance.", tags: ["AML","Payment"], link:"https://www.gov.uk/government/publications/budget-2026" }
+      { title: "New AML guidance published", summary: "Updated AML guidance sets expectations for UK financial firms.", tags: ["AML","Financial"], link: "https://www.gov.uk/government/publications/anti-money-laundering-supervision" },
+      { title: "Budget 2026 announced", summary: "HM Treasury presents new budget with AML compliance focus.", tags: ["AML","Budget"], link: "https://www.gov.uk/government/news/budget-2026-announcement" }
     ],
     priorities: ["Strengthening UK AML regime", "Economic oversight and regulatory reform"],
-    importantDates: [ { date: "2025-12-01", title: "Consultation deadline", tags:["AML"] } ]
+    importantDates: ["2025-12-01: Consultation deadline"]
   },
   {
     name: "Home Office",
-    subtitle: "Crossover with FCA: Border security & AML investigations",
     news: [
-      { title: "Immigration reform announced", summary: "Policy update related to border and AML investigations.", tags:["AML"], link:"https://www.gov.uk/government/news/immigration-reform" }
+      { title: "Immigration reform announced", summary: "Policy update related to border and AML investigations.", tags: ["AML","Immigration"], link: "https://www.gov.uk/government/news/home-office-immigration-reform" }
     ],
     priorities: ["Border security", "AML investigations support"],
-    importantDates: [ { date: "2025-11-30", title: "Policy release", tags:["AML"] } ]
+    importantDates: ["2025-11-30: Policy release"]
   },
   {
     name: "HMRC",
-    subtitle: "Crossover with FCA: Tax compliance & crypto supervision",
     news: [
-      { title: "Crypto reporting requirements updated", summary: "New guidance for crypto transactions.", tags:["AML","Crypto"], link:"https://www.gov.uk/government/organisations/hm-revenue-customs" }
+      { title: "Crypto reporting requirements updated", summary: "New guidance under CARF for crypto-asset service providers.", tags: ["AML","Crypto"], link: "https://www.gov.uk/guidance/reporting-cryptoasset-user-and-transaction-data" },
+      { title: "Data collection obligations under CARF", summary: "What crypto platforms must collect and report to HMRC.", tags: ["AML","Crypto"], link: "https://www.gov.uk/guidance/collecting-cryptoasset-user-and-transaction-data" }
     ],
     priorities: ["Tax compliance", "AML supervision"],
-    importantDates: [ { date: "2025-12-15", title: "Crypto guidance", tags:["AML","Crypto"] } ]
+    importantDates: ["2025-12-15: Crypto guidance"]
   },
   {
     name: "FATF",
-    subtitle: "Global AML standards & UK evaluation",
     news: [
-      { title: "Next MER scheduled", summary: "UK evaluation of AML regime effectiveness.", tags:["AML","Global"], link:"https://www.fatf-gafi.org/publications/mutualevaluations/" }
+      { title: "Next MER scheduled", summary: "The UK's next Mutual Evaluation Review will assess AML regime effectiveness.", tags: ["AML","International"], link: "https://www.fatf-gafi.org/publications/mutualevaluations/" }
     ],
     priorities: ["Global AML standards", "UK evaluation"],
-    importantDates: [ { date: "2027-01-01", title: "MER review", tags:["AML","Global"] } ]
+    importantDates: ["2027: UK Mutual Evaluation Review"]
   },
   {
     name: "FCA",
-    subtitle: "Supervision of authorized firms & crypto oversight",
     news: [
-      { title: "REP CRIM update guidance released", summary: "New guidance for authorized firms.", tags:["AML","FCA"], link:"https://www.fca.org.uk/news/press-releases" }
+      { title: "REP CRIM update guidance released", summary: "Updated guidance for authorized firms under FSMA.", tags: ["AML","Regulation","Crypto"], link: "https://www.fca.org.uk/publications/correspondence/rep-crim-guidance" }
     ],
     priorities: ["Supervision of authorized firms", "Crypto oversight"],
-    importantDates: [ { date: "2025-12-10", title: "Compliance check", tags:["AML","FCA"] } ]
+    importantDates: ["2025-12-10: Compliance check"]
   },
   {
     name: "OFCOM",
-    subtitle: "Crossover with FCA: Communications oversight",
     news: [
-      { title: "Telecom sector regulatory update", summary: "Ongoing supervision of digital communications.", tags:["Regulation","Telecom"], link:"https://www.ofcom.org.uk/news" }
+      { title: "Telecoms and payment fraud alert", summary: "Updated guidance on telecom fraud and financial scams.", tags: ["Fraud","Payments"], link: "https://www.ofcom.org.uk/consultations-and-statements" }
     ],
-    priorities: ["Communications oversight", "Consumer protection"],
-    importantDates: [ { date: "2025-12-05", title: "Annual review", tags:["OFCOM"] } ]
+    priorities: ["Consumer protection", "AML awareness"],
+    importantDates: ["2025-12-05: Fraud consultation"]
   },
   {
     name: "Trading Standards",
-    subtitle: "Consumer fraud monitoring",
     news: [
-      { title: "Consumer fraud alerts", summary: "Updates on recent scams.", tags:["Fraud","Consumer"], link:"https://www.tradingstandards.uk/news" }
+      { title: "National fraud campaign launched", summary: "Campaign targeting scams and AML compliance in businesses.", tags: ["AML","Fraud"], link: "https://www.tradingstandards.uk/news" }
     ],
-    priorities: ["Consumer protection", "Fraud investigations"],
-    importantDates: [ { date: "2025-11-28", title: "Fraud bulletin release", tags:["Fraud"] } ]
+    priorities: ["Consumer protection", "Fraud prevention"],
+    importantDates: ["2025-12-20: Campaign launch"]
   },
   {
     name: "National Trading Standards",
-    subtitle: "National oversight & coordination",
     news: [
-      { title: "National fraud reporting", summary: "Summary of national scam cases.", tags:["Fraud"], link:"https://www.nationaltradingstandards.uk/news" }
+      { title: "National enforcement priorities 2025", summary: "Focus on AML and fraud risks in consumer markets.", tags: ["AML","Fraud","Consumer"], link: "https://www.nationaltradingstandards.uk/news/" }
     ],
-    priorities: ["National oversight", "Coordination of local trading standards"],
-    importantDates: [ { date: "2025-12-02", title: "Report release", tags:["Fraud"] } ]
+    priorities: ["AML risk oversight", "Consumer fraud detection"],
+    importantDates: ["2025-11-29: Enforcement report"]
   },
   {
     name: "DWP",
-    subtitle: "Benefit fraud & integrity",
     news: [
-      { title: "Benefit fraud update", summary: "Measures to reduce fraud in benefits system.", tags:["Fraud","DWP"], link:"https://www.gov.uk/government/organisations/department-for-work-pensions" }
+      { title: "Benefit fraud guidance updated", summary: "Updated guidance for detecting fraudulent claims.", tags: ["Fraud","AML"], link: "https://www.gov.uk/government/organisations/department-for-work-pensions" }
     ],
-    priorities: ["Fraud reduction", "Benefit system integrity"],
-    importantDates: [ { date: "2025-12-08", title: "Internal report", tags:["DWP"] } ]
+    priorities: ["Fraud detection", "AML compliance"],
+    importantDates: ["2025-12-12: New guidance"]
   }
 ];
 
 // Render dashboard
-const dashboard = document.getElementById('dashboard');
-agenciesData.forEach((agency) => {
-  const section = document.createElement('div');
-  section.className = 'section';
+const container = document.getElementById("dashboard");
+const diaryBody = document.querySelector("#diary tbody");
+
+agenciesData.forEach((agency, index) => {
+  const section = document.createElement("div");
+  section.classList.add("agency-section", "collapsed");
   
-  const btn = document.createElement('button');
-  btn.textContent = agency.name;
-  btn.className = agency.name.toLowerCase().replace(/ /g,'-');
-  btn.onclick = () => {
-    const contentDiv = section.querySelector('.content');
-    contentDiv.classList.toggle('open');
-    contentDiv.style.maxHeight = contentDiv.classList.contains('open') ? contentDiv.scrollHeight + 'px' : 0;
-  };
-  section.appendChild(btn);
+  const title = document.createElement("h2");
+  title.textContent = agency.name;
+  section.appendChild(title);
 
-  const content = document.createElement('div');
-  content.className = 'content';
-  content.innerHTML = `<p><em>${agency.subtitle}</em></p>` +
-    agency.news.map(n => `<p><strong>${n.title}</strong> - ${n.summary} <a href="${n.link}" target="_blank">Read more</a></p>`).join('') +
-    `<p><strong>Priorities:</strong> ${agency.priorities.join(', ')}</p>`;
-  section.appendChild(content);
+  const content = document.createElement("div");
+  content.classList.add("content");
 
-  dashboard.appendChild(section);
+  // News
+  agency.news.forEach((item) => {
+    const newsDiv = document.createElement("div");
+    newsDiv.classList.add("news-item");
+    const link = document.createElement("a");
+    link.href = item.link;
+    link.target = "_blank";
+    link.textContent = item.title + " - Read more";
+    const summary = document.createElement("p");
+    summary.textContent = item.summary;
+    newsDiv.appendChild(link);
+    newsDiv.appendChild(summary);
+    content.appendChild(newsDiv);
 
-  // Add to diary table
-  const tbody = document.querySelector('#diaryTable tbody');
-  agency.importantDates.forEach(d => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${d.date}</td><td>${agency.name}</td><td>${d.title}</td><td>${d.tags.join(', ')}</td>`;
-    tbody.appendChild(tr);
+    // Add to diary table
+    item.tags.forEach(tag => {
+      const row = document.createElement("tr");
+      const dateCell = document.createElement("td");
+      dateCell.textContent = agency.importantDates[0].split(":")[0];
+      const agencyCell = document.createElement("td");
+      agencyCell.textContent = agency.name;
+      const titleCell = document.createElement("td");
+      titleCell.textContent = item.title;
+      const tagsCell = document.createElement("td");
+      tagsCell.textContent = item.tags.join(", ");
+      row.appendChild(dateCell);
+      row.appendChild(agencyCell);
+      row.appendChild(titleCell);
+      row.appendChild(tagsCell);
+      diaryBody.appendChild(row);
+    });
   });
+
+  // Priorities
+  const pri = document.createElement("p");
+  pri.innerHTML = "<strong>Priorities:</strong> " + agency.priorities.join(", ");
+  content.appendChild(pri);
+
+  section.appendChild(content);
+  container.appendChild(section);
+
+  // Toggle expand/collapse
+  section.addEventListener("click", () => {
+    const expanded = section.classList.toggle("expanded");
+    section.classList.toggle("collapsed", !expanded);
+    content.style.display = expanded ? "block" : "none";
+  });
+
+  // Assign random pastel background color for each agency
+  const pastelColors = ["#FFCDD2","#F8BBD0","#E1BEE7","#D1C4E9","#BBDEFB","#B2EBF2","#C8E6C9","#FFF9C4","#FFE0B2","#FFCCBC"];
+  section.style.background = pastelColors[index % pastelColors.length];
 });
 </script>
 </body>
