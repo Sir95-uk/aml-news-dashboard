@@ -13,15 +13,34 @@ h1 { color: #2c3e50; }
 .content { display: none; padding: 10px 15px; }
 .content h3 { margin-top: 0; color: #2c3e50; }
 ul { margin-top: 5px; }
+#filter { margin-bottom: 20px; padding: 8px; font-size: 16px; }
+#merCountdown { font-weight: bold; margin-bottom: 15px; }
 </style>
 </head>
 <body>
 
 <h1>AML & Regulatory Dashboard</h1>
 <p>Auto-loaded from <code>agencies.json</code> — shows news, summaries, priorities, and dates.</p>
+<div id="merCountdown">Loading MER countdown…</div>
+<label for="filter">Filter by Agency:</label>
+<select id="filter">
+  <option value="All">All agencies</option>
+</select>
+
 <div id="dashboard"></div>
 
 <script>
+// FATF MER 2027 countdown
+const merDate = new Date("2027-01-01T00:00:00");
+function updateMERCountdown() {
+  const now = new Date();
+  const diff = merDate - now;
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  document.getElementById('merCountdown').textContent = `⏳ FATF MER 2027 in ${days} days`;
+}
+updateMERCountdown();
+setInterval(updateMERCountdown, 1000 * 60 * 60); // update hourly
+
 // Load JSON from GitHub
 const agenciesURL = 'https://raw.githubusercontent.com/Sir95-uk/aml-news-dashboard/main/agencies.json';
 
@@ -29,68 +48,59 @@ fetch(agenciesURL)
   .then(res => res.json())
   .then(data => {
     const container = document.getElementById('dashboard');
+    const filter = document.getElementById('filter');
 
+    // Populate filter dropdown
     data.agencies.forEach(agency => {
-      const section = document.createElement('div');
-      section.className = 'section';
-
-      const btn = document.createElement('button');
-      btn.textContent = agency.name;
-      btn.onclick = () => {
-        content.style.display = content.style.display === 'block' ? 'none' : 'block';
-      };
-
-      const content = document.createElement('div');
-      content.className = 'content';
-
-      const newsH3 = document.createElement('h3');
-      newsH3.textContent = 'News';
-      content.appendChild(newsH3);
-      const newsUl = document.createElement('ul');
-      agency.news.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = item;
-        newsUl.appendChild(li);
-      });
-      content.appendChild(newsUl);
-
-      const summaryH3 = document.createElement('h3');
-      summaryH3.textContent = 'Summary';
-      content.appendChild(summaryH3);
-      const summaryUl = document.createElement('ul');
-      agency.summary.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = item;
-        summaryUl.appendChild(li);
-      });
-      content.appendChild(summaryUl);
-
-      const prioritiesH3 = document.createElement('h3');
-      prioritiesH3.textContent = 'Priorities';
-      content.appendChild(prioritiesH3);
-      const prioritiesUl = document.createElement('ul');
-      agency.priorities.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = item;
-        prioritiesUl.appendChild(li);
-      });
-      content.appendChild(prioritiesUl);
-
-      const datesH3 = document.createElement('h3');
-      datesH3.textContent = 'Important Dates';
-      content.appendChild(datesH3);
-      const datesUl = document.createElement('ul');
-      agency.importantDates.forEach(item => {
-        const li = document.createElement('li');
-        li.textContent = item;
-        datesUl.appendChild(li);
-      });
-      content.appendChild(datesUl);
-
-      section.appendChild(btn);
-      section.appendChild(content);
-      container.appendChild(section);
+      const opt = document.createElement('option');
+      opt.value = agency.name;
+      opt.textContent = agency.name;
+      filter.appendChild(opt);
     });
+
+    function render(agencyFilter) {
+      container.innerHTML = '';
+      data.agencies.forEach(agency => {
+        if (agencyFilter !== 'All' && agency.name !== agencyFilter) return;
+
+        const section = document.createElement('div');
+        section.className = 'section';
+
+        const btn = document.createElement('button');
+        btn.textContent = agency.name;
+        btn.onclick = () => {
+          content.style.display = content.style.display === 'block' ? 'none' : 'block';
+        };
+
+        const content = document.createElement('div');
+        content.className = 'content';
+
+        const createList = (title, items) => {
+          const h3 = document.createElement('h3');
+          h3.textContent = title;
+          content.appendChild(h3);
+          const ul = document.createElement('ul');
+          items.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item;
+            ul.appendChild(li);
+          });
+          content.appendChild(ul);
+        };
+
+        createList('News', agency.news || []);
+        createList('Summary', agency.summary || []);
+        createList('Priorities', agency.priorities || []);
+        createList('Important Dates', agency.importantDates || []);
+
+        section.appendChild(btn);
+        section.appendChild(content);
+        container.appendChild(section);
+      });
+    }
+
+    filter.addEventListener('change', () => render(filter.value));
+    render('All');
   })
   .catch(err => {
     document.getElementById('dashboard').innerHTML = `<p style="color:red;">Error loading agencies.json — check file name & structure in repo.</p>`;
